@@ -187,6 +187,7 @@ public class signupDialog extends JDialog implements ActionListener {
 			else {
 				try {
 					int result = userdao.user_insert(txtid.getText(), txtnick.getText(), txtpassword.getText());
+					dispose();
 				if (result > 0) {
 					JOptionPane.showMessageDialog(this,"회원가입이 성공적으로 이루어졌습니다.","sign up", JOptionPane.OK_OPTION);
 					
