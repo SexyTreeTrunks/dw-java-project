@@ -2,7 +2,7 @@ package model;
 
 import view.Variables;
 
-public class UserVO {
+public class ClientVO {
 	
 	// UserID
 	private String userID;
@@ -23,7 +23,7 @@ public class UserVO {
 		this.connectRoom = connectRoom;
 	}
 
-	public UserVO(String userID, String userName) {
+	public ClientVO(String userID, String userName) {
 		this.userID = userID;
 		this.userName = userName;
 	}

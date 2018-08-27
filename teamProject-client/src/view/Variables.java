@@ -3,7 +3,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 
-import model.UserVO;
+import model.ClientVO;
 
 public class Variables {
 	// Server IP, Port
@@ -23,19 +23,19 @@ public class Variables {
 	public static Dimension CHAT_VIEW_SIZE = new Dimension(760, 370);
 	public static Dimension CHAT_SEND_SIZE = new Dimension(760, 80);
 	
-	private UserVO vo;
+	private ClientVO vo;
 	private ArrayList<String> roomList;
 	
-	public Variables(UserVO vo) {
+	public Variables(ClientVO vo) {
 		this.vo = vo;
 		roomList = new ArrayList<>();
 	}
 	
-	public UserVO getVO() {
+	public ClientVO getVO() {
 		return vo;
 	}
 	
-	public void setVO(UserVO vo) {
+	public void setVO(ClientVO vo) {
 		this.vo = vo;
 	}
 	

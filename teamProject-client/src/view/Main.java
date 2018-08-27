@@ -18,7 +18,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import model.UserVO;
+import model.ClientVO;
 
 public class Main extends JFrame {
 	private SocketChannel socketChannel;
@@ -54,7 +54,7 @@ public class Main extends JFrame {
 
 	public Main() {
 
-		var = new Variables(new UserVO(userId, userName));
+		var = new Variables(new ClientVO(userId, userName));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1060, 700);
 		contentPane = new JPanel();

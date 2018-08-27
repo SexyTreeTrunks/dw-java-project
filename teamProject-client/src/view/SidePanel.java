@@ -22,13 +22,13 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import model.UserVO;
+import model.ClientVO;
 
 public class SidePanel extends JPanel {
 	private Variables var;
 	private Vector<String> userList;
 	private JList<String> list;
-	private UserVO vo;
+	private ClientVO vo;
 
 	public SidePanel(Main main) {
 		var = main.getVar();
