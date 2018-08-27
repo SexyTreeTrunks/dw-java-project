@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -240,5 +241,17 @@ public class Main extends JFrame {
 		chatPanelList.add(chatPanel);
 		mainCardPanel.add("Chat_" + roomName, chatPanel);
 		homePanel.addRoom(roomName);
+	}
+	
+	public void removeChatPanel(String roomName) {
+		setMainCard("Home");
+		Iterator<ChatPanel> iter = chatPanelList.iterator();
+		while (iter.hasNext()) {
+			ChatPanel c = iter.next();
+			if (c.roomName.equals(roomName)) {
+				iter.remove();
+			}
+		}
+		
 	}
 }

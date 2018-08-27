@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -105,6 +106,13 @@ public class HomePanel extends JPanel {
 	public void addRoom(String roomName) {
 		if (!homeRoomPanel.getRoomList().contains(roomName)) {
 			homeRoomPanel.addRoom(roomName);
+			setHomeCard();
+		}
+	}
+	
+	public void removeRoom(String roomName) {
+		if(homeRoomPanel.getRoomList().contains(roomName)) {
+			homeRoomPanel.removeRoom(roomName);
 			setHomeCard();
 		}
 	}

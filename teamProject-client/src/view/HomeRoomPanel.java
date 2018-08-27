@@ -84,7 +84,7 @@ public class HomeRoomPanel extends JPanel{
 		}
 	}
 
-	public void roomRemove(String roomName) {
+	public void removeRoom(String roomName) {
 		Iterator<String> iter = roomList.iterator();
 		while (iter.hasNext()) {
 			String s = iter.next();
