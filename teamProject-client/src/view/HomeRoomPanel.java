@@ -15,21 +15,24 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class HomeRoomPanel extends JPanel{
+public class HomeRoomPanel extends JPanel {
 
 	private Main main;
+	private Variables var;
 	private ArrayList<JLabel> roomLabelList;
 	private ArrayList<String> roomList;
-	private int roomCount;
+	public int roomCount;
 
 	public HomeRoomPanel(Main mainFrame) {
 		main = mainFrame;
+		var = main.getVar();
 		roomList = new ArrayList<>();
 		init();
 	}
 
 	public HomeRoomPanel(Main mainFrame, ArrayList<String> roomList) {
 		main = mainFrame;
+		var = main.getVar();
 		this.roomList = roomList;
 		init();
 	}
@@ -40,6 +43,7 @@ public class HomeRoomPanel extends JPanel{
 		setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.black));
 		roomLabelList = new ArrayList<JLabel>(10);
 		roomCount = 0;
+		
 
 		JPanel homeRoomListPanel = new JPanel();
 		homeRoomListPanel.setBackground(Color.WHITE);
@@ -65,38 +69,50 @@ public class HomeRoomPanel extends JPanel{
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if (e.getClickCount() == 2) {
-						main.setMainCard("Chat_"+room.getText().replaceAll("님과의 채팅방", ""));
+						String cRoom = room.getText().replaceAll("님과의 채팅방", "");
+						var.getVO().setconnectRoom(cRoom);
+						main.setMainCard("Chat_" + cRoom);
 					}
 				}
 			});
+			roomList.add("_"+i);
 			roomLabelList.add(room);
-			if (i < 5)
+			if (i < 5) {
 				homeRoomLeftPanel.add(roomLabelList.get(i));
-			else
+			} else {
 				homeRoomRightPanel.add(roomLabelList.get(i));
+			}
 		}
 	}
 
 	public void addRoom(String roomName) {
 		if (roomCount < 10) {
-			roomList.add(roomName + "_" + roomCount);
+			roomList.set(roomCount, roomName+"_"+roomCount);
 			roomLabelList.get(roomCount++).setText(roomName + "님과의 채팅방");
 		}
 	}
 
-	public void removeRoom(String roomName) {
-		Iterator<String> iter = roomList.iterator();
-		while (iter.hasNext()) {
-			String s = iter.next();
-			String[] st = s.split("_");
-			if (st[0].equals(roomName)) {
-				iter.remove();
-				roomLabelList.get(Integer.parseInt(st[1])).setText("");
-			}
+	public void removeRoom(String roomName, int roomNumber) {
+		for (int i = roomNumber + 1; i < 10; i++) {
+			// roomList - 1
+			String[] roo = roomList.get(i).split("_");
+			roo[1] = (Integer.parseInt(roo[1]) - 1) + "";
+			roomList.set(i - 1, roo[0] + "_" + roo[1]);
 		}
+		roomList.set(9, "_9");
+		for(int i = 0 ; i < 10; i++) {
+			String[] roo = roomList.get(i).split("_");
+			String room ="";
+			
+			if(!roo[0].equals(""))
+				room = roo[0]+"님과의 채팅방";
+			
+			roomLabelList.get(i).setText(room);
+		}
+		roomCount--;
 	}
-	
-	public ArrayList<String> getRoomList(){
+
+	public ArrayList<String> getRoomList() {
 		return roomList;
 	}
 }

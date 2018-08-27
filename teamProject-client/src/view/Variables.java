@@ -7,8 +7,8 @@ import model.UserVO;
 
 public class Variables {
 	// Server IP, Port
-	// private static final String SERVER_IP = "35.190.228.94";
-	public static final String SERVER_IP = "localhost";
+	//public static final String SERVER_IP = "localhost";
+	public static final String SERVER_IP = "35.190.228.94";
 	public static final int SERVER_PORT = 3000;
 	
 	public static String CLIENT_USER_DATA = "001";

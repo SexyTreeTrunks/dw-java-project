@@ -33,7 +33,7 @@ public class Main extends JFrame {
 	private String mainCardName;
 
 	private String userId = "asd3";
-	private String userName = "강명구1";
+	private String userName = "강명구4";
 
 	private ArrayList<ChatPanel> chatPanelList;
 
@@ -159,7 +159,7 @@ public class Main extends JFrame {
 							sidePanel.changeUserList(data);
 
 					} catch (Exception e) {
-						System.out.println(e);
+						e.printStackTrace();
 						stopClient();
 						break;
 					}
@@ -185,7 +185,7 @@ public class Main extends JFrame {
 					c.chatReceive(data);
 		}
 	}
-
+	
 	public void chatSend(String chat) {
 		Thread thread = new Thread() {
 			@Override
@@ -250,8 +250,8 @@ public class Main extends JFrame {
 			ChatPanel c = iter.next();
 			if (c.roomName.equals(roomName)) {
 				iter.remove();
+				homePanel.removeRoom(roomName);
 			}
 		}
-		
 	}
 }

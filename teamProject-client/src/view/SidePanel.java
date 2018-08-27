@@ -25,12 +25,14 @@ import javax.swing.border.EmptyBorder;
 import model.UserVO;
 
 public class SidePanel extends JPanel {
+	private Main main;
 	private Variables var;
 	private Vector<String> userList;
 	private JList<String> list;
 	private UserVO vo;
 
-	public SidePanel(Main main) {
+	public SidePanel(Main mainFrame) {
+		main = mainFrame;
 		var = main.getVar();
 		vo = var.getVO();
 		
@@ -71,7 +73,7 @@ public class SidePanel extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					String roomName = list.getSelectedValue();
-					var.getVO().setconnectRoom(roomName);;
+					var.getVO().setconnectRoom(roomName);
 					main.addChatPanel(roomName);
 					main.setMainCard("Chat_"+roomName);
 					list.clearSelection();
@@ -121,6 +123,7 @@ public class SidePanel extends JPanel {
 				String s = iter.next();
 				if (!clientList.contains(s)) {
 					iter.remove();
+					main.removeChatPanel(s);
 				}
 			}
 			
