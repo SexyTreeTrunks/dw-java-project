@@ -93,7 +93,7 @@ public class HomePanel extends JPanel {
 
 	public void setHomeCard() {
 		String panel = "No";
-		if (!homeRoomPanel.getRoomList().isEmpty())
+		if (homeRoomPanel.roomCount != 0)
 			panel = "Exist";
 		homeCards.show(homeCenterPanel, panel);
 		homeCardName = panel;
@@ -111,9 +111,12 @@ public class HomePanel extends JPanel {
 	}
 	
 	public void removeRoom(String roomName) {
-		if(homeRoomPanel.getRoomList().contains(roomName)) {
-			homeRoomPanel.removeRoom(roomName);
-			setHomeCard();
+		for(String room : homeRoomPanel.getRoomList()){
+			String[] roo = room.split("_");
+			if(roo[0].equals(roomName)) {
+				homeRoomPanel.removeRoom(roomName, Integer.parseInt(roo[1]));
+				setHomeCard();
+			}
 		}
 	}
 }
