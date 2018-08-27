@@ -26,7 +26,7 @@ public class Main extends JFrame {
 
 	private JPanel contentPane;
 	public SidePanel sidePanel;
-	public MusicPanel musicPanel;
+	public MusicPlayer musicPanel;
 	public JPanel mainCardPanel;
 	private HomePanel homePanel;
 	private CardLayout mainCards;
@@ -77,7 +77,7 @@ public class Main extends JFrame {
 		mainPanel.setPreferredSize(Variables.MAIN_PANEL_SIZE);
 
 		// Music Panel
-		musicPanel = new MusicPanel();
+		musicPanel = new MusicPlayer();
 		mainPanel.add(musicPanel, BorderLayout.NORTH);
 
 		JList Playlist = new JList();
