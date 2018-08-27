@@ -7,23 +7,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
+
+import model.UserDAO;
+import model.UserVO;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.awt.Font;
 
 public class LoginForm extends JFrame implements ActionListener {
@@ -32,22 +27,7 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JTextField txtid;
 	private JPasswordField txtpassword;
 	private JButton loginbtn, signbtn;
-
-	private Connection con = null;
-	private PreparedStatement pstmt = null;
-	private ResultSet rs = null;
-
-	private Connection getConnection() {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			String url = "jdbc:mysql://35.190.228.94:3306/teamdb?useSSL=false";
-			con = DriverManager.getConnection(url, "root", "12345");
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-		return con;
-	}
-
+	private UserDAO userdao = new UserDAO();
 	/**
 	 * Launch the application.
 	 */
@@ -128,24 +108,19 @@ public class LoginForm extends JFrame implements ActionListener {
 
 		String id = txtid.getText(); // id 와 password text 얻어오기
 		String password = txtpassword.getText();
-		String sql = "";
-
+		
 		if (e.getSource().equals(loginbtn)) {
-			con = getConnection();
-			sql = "select * from usertbl where id='"+ id +"' and password = '" + password +"'";
-			try {pstmt = con.prepareStatement(sql);
-				rs = pstmt.executeQuery();
-				if (rs.next() == true) {
+			UserVO user = userdao.getUser(id, password);
+			try {
+				if (user != null) {
 					JOptionPane.showMessageDialog(this, "로그인되었습니다.", "login", JOptionPane.OK_OPTION);
 				} else {
 					JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 일치하지 않습니다.", "login", JOptionPane.ERROR_MESSAGE);
 				}
-			} catch (SQLException e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
-		}
-		
-		else {
+		} else {
 			signupDialog sign = new signupDialog();
 			sign.setVisible(true);
 		}

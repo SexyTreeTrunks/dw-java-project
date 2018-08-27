@@ -71,13 +71,60 @@ public class UserDAO {
 	}
 
 	//select
-	public UserVO getUser(int no) {
+	public UserVO getUser(String id, String password) {
 		conn = getConnection();
-		String sql = "select * from usertbl where no=?";
+		String sql = "select * from usertbl where id=? and password=?";
 		UserVO vo = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, no);
+			pstmt.setString(1, id);
+			pstmt.setString(2, password);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				vo = new UserVO();
+				vo.setID(rs.getString(1));
+				vo.setUsername(rs.getString(2));
+				vo.setPassword(rs.getString(3));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			dbClose(conn, pstmt, rs);
+		}
+		return vo;
+	}
+	
+	//select
+	public UserVO getUserById(String id) {
+		conn = getConnection();
+		String sql = "select * from usertbl where id=?";
+		UserVO vo = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				vo = new UserVO();
+				vo.setID(rs.getString(1));
+				vo.setUsername(rs.getString(2));
+				vo.setPassword(rs.getString(3));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			dbClose(conn, pstmt, rs);
+		}
+		return vo;
+	}
+	
+	// select
+	public UserVO getUserByUsername(String username) {
+		conn = getConnection();
+		String sql = "select * from usertbl where username=?";
+		UserVO vo = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, username);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				vo = new UserVO();

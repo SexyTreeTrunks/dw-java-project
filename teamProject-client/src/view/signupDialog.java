@@ -1,27 +1,20 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
-import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
+
+import model.UserDAO;
+import model.UserVO;
+
 import java.awt.Font;
 
 public class signupDialog extends JDialog implements ActionListener {
@@ -32,25 +25,10 @@ public class signupDialog extends JDialog implements ActionListener {
 	private JLabel nicklabel;
 	private JButton okbtn, cancelbtn, confirmbtn_id, confirmbtn_nick;
 
-	private Connection con = null;
-	private PreparedStatement pstmt = null;
-	private ResultSet rs = null;
 	private boolean bool_id = false;
 	private boolean bool_nick = false;
+	private UserDAO userdao = new UserDAO();
 	
-	
-
-	private Connection getConnection() {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			String url = "jdbc:mysql://35.190.228.94:3306/teamdb?useSSL=false";
-			con = DriverManager.getConnection(url, "root", "12345");
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
-		return con;
-	}
-
 	/**
 	 * Launch the application.
 	 */
@@ -159,17 +137,11 @@ public class signupDialog extends JDialog implements ActionListener {
 		char[] password = txtpassword.getPassword();
 		char[] confirmpassword = txtconfirm.getPassword();
 		String nickname = txtnick.getText();
-		String sql = "";
-
-		con = getConnection();
 		// 아이디 중복체크 여부
 		if (e.getSource().equals(confirmbtn_id)) {
-			sql = "select * from usertbl where id='" + txtid.getText() + "'";
+			UserVO user = userdao.getUserById(id);
 			try {
-				pstmt = con.prepareStatement(sql);
-				rs = pstmt.executeQuery(sql);
-
-				if (rs.next() == true) {
+				if (user != null) {
 					JOptionPane.showMessageDialog(txtid, "해당 아이디는 현재 사용중입니다. 다시 작성해주세요.", "sign up",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
@@ -177,23 +149,23 @@ public class signupDialog extends JDialog implements ActionListener {
 					bool_id = true;
 				}
 
-			} catch (SQLException e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
 
 		else if (e.getSource().equals(confirmbtn_nick)) {
 			// 닉네임 중복체크 여부
-			sql = "select * from usertbl where nick=" + txtnick.getText() + "";
+			UserVO user = userdao.getUserByUsername(nickname);
 			try {
-				if (rs.next() == true) {
+				if (user!=null) {
 					JOptionPane.showMessageDialog(txtnick, "해당 닉네임은 현재 사용중입니다. 다시 작성해주세요.", "sign up",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
 					JOptionPane.showMessageDialog(this, "사용가능한 닉네임입니다.", "sign up", JOptionPane.OK_OPTION);
 					bool_nick = true;
 				}
-			} catch (SQLException e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 
@@ -213,19 +185,16 @@ public class signupDialog extends JDialog implements ActionListener {
 			}
 			
 			else {
-				con = getConnection();
-				sql = "insert into usertbl values ('" + txtid.getText()+ "', '" + txtnick.getText() + "','" + txtpassword.getText() + "')";
 				try {
-					pstmt = con.prepareStatement(sql);
-					int result = pstmt.executeUpdate();
-
+					int result = userdao.user_insert(txtid.getText(), txtnick.getText(), txtpassword.getText());
 				if (result > 0) {
 					JOptionPane.showMessageDialog(this,"회원가입이 성공적으로 이루어졌습니다.","sign up", JOptionPane.OK_OPTION);
+					
 				} else {
 					JOptionPane.showMessageDialog(this, "sad", "sign up", JOptionPane.OK_OPTION);
 				}
 				
-				} catch (SQLException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 
