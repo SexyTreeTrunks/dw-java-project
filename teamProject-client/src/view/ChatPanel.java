@@ -157,6 +157,7 @@ public class ChatPanel extends JPanel {
 		textAreaChatSend.setText("");
 	}
 
+	
 	private void chatSend() {
 		String chat = textAreaChatSend.getText();
 		if (!chat.equals("")) {
