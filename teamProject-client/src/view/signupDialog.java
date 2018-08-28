@@ -23,6 +23,7 @@ import sun.security.ec.ECDHKeyAgreement;
 
 import java.awt.Font;
 
+
 public class signupDialog extends JDialog implements ActionListener {
 
 	private final JPanel contentPanel = new JPanel();
