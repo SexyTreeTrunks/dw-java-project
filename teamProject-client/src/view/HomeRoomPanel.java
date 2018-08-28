@@ -43,7 +43,6 @@ public class HomeRoomPanel extends JPanel {
 		setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.black));
 		roomLabelList = new ArrayList<JLabel>(10);
 		roomCount = 0;
-		
 
 		JPanel homeRoomListPanel = new JPanel();
 		homeRoomListPanel.setBackground(Color.WHITE);
@@ -70,12 +69,14 @@ public class HomeRoomPanel extends JPanel {
 				public void mouseClicked(MouseEvent e) {
 					if (e.getClickCount() == 2) {
 						String cRoom = room.getText().replaceAll("님과의 채팅방", "");
-						var.getVO().setconnectRoom(cRoom);
-						main.setMainCard("Chat_" + cRoom);
+						if (!cRoom.equals("")) {
+							var.getVO().setconnectRoom(cRoom);
+							main.setMainCard("Chat_" + cRoom);
+						}
 					}
 				}
 			});
-			roomList.add("_"+i);
+			roomList.add("_" + i);
 			roomLabelList.add(room);
 			if (i < 5) {
 				homeRoomLeftPanel.add(roomLabelList.get(i));
@@ -87,7 +88,7 @@ public class HomeRoomPanel extends JPanel {
 
 	public void addRoom(String roomName) {
 		if (roomCount < 10) {
-			roomList.set(roomCount, roomName+"_"+roomCount);
+			roomList.set(roomCount, roomName + "_" + roomCount);
 			roomLabelList.get(roomCount++).setText(roomName + "님과의 채팅방");
 		}
 	}
@@ -100,13 +101,13 @@ public class HomeRoomPanel extends JPanel {
 			roomList.set(i - 1, roo[0] + "_" + roo[1]);
 		}
 		roomList.set(9, "_9");
-		for(int i = 0 ; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			String[] roo = roomList.get(i).split("_");
-			String room ="";
-			
-			if(!roo[0].equals(""))
-				room = roo[0]+"님과의 채팅방";
-			
+			String room = "";
+
+			if (!roo[0].equals(""))
+				room = roo[0] + "님과의 채팅방";
+
 			roomLabelList.get(i).setText(room);
 		}
 		roomCount--;

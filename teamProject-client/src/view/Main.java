@@ -34,22 +34,15 @@ public class Main extends JFrame {
 	private String mainCardName;
 
 	private ArrayList<ChatPanel> chatPanelList;
-	// login -> main
-/*	public static void main(String[] args) {
 
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Main frame = new Main();
-					frame.setVisible(true);
-					frame.startClient();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-*/
+	// login -> main
+	/*
+	 * public static void main(String[] args) {
+	 * 
+	 * EventQueue.invokeLater(new Runnable() { public void run() { try { Main frame
+	 * = new Main(); frame.setVisible(true); frame.startClient(); } catch (Exception
+	 * e) { e.printStackTrace(); } } }); }
+	 */
 	public Main(UserVO user) {
 		var = new Variables(new ClientVO(user.getID(), user.getUsername()));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,8 +71,7 @@ public class Main extends JFrame {
 		musicPanel = new MusicPlayer();
 		musicPanel.setPreferredSize(Variables.MUSIC_PANEL_SIZE);
 		mainPanel.add(musicPanel, BorderLayout.NORTH);
-		
-		
+
 		// Home & Chat Panel
 		mainCardPanel = new JPanel();
 		mainCardPanel.setPreferredSize(Variables.CHAT_PANEL_SIZE);
@@ -89,7 +81,7 @@ public class Main extends JFrame {
 		mainCardPanel.add("Home", homePanel);
 		mainPanel.add(mainCardPanel, BorderLayout.CENTER);
 		setMainCard("Home");
-		
+
 		startClient();
 	}
 
@@ -183,8 +175,9 @@ public class Main extends JFrame {
 				if (c.roomName.equals(message[1]))
 					c.chatReceive(data);
 		}
+		
 	}
-	
+
 	public void chatSend(String chat) {
 		Thread thread = new Thread() {
 			@Override
@@ -236,12 +229,22 @@ public class Main extends JFrame {
 	}
 
 	public void addChatPanel(String roomName) {
-		ChatPanel chatPanel = new ChatPanel(this, roomName);
-		chatPanelList.add(chatPanel);
-		mainCardPanel.add("Chat_" + roomName, chatPanel);
-		homePanel.addRoom(roomName);
+		boolean contain = false;
+
+		for (ChatPanel c : chatPanelList)
+			if (c.roomName.equals(roomName))
+				contain = true;
+
+		if (contain) {
+
+		} else {
+			ChatPanel chatPanel = new ChatPanel(this, roomName);
+			chatPanelList.add(chatPanel);
+			mainCardPanel.add("Chat_" + roomName, chatPanel);
+			homePanel.addRoom(roomName);
+		}
 	}
-	
+
 	public void removeChatPanel(String roomName) {
 		setMainCard("Home");
 		Iterator<ChatPanel> iter = chatPanelList.iterator();
