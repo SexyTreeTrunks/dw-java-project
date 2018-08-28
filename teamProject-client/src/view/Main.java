@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import model.ClientVO;
+import model.UserVO;
 
 public class Main extends JFrame {
 	private SocketChannel socketChannel;
@@ -32,12 +33,9 @@ public class Main extends JFrame {
 	private CardLayout mainCards;
 	private String mainCardName;
 
-	private String userId = "asd3";
-	private String userName = "강명구4";
-
 	private ArrayList<ChatPanel> chatPanelList;
-
-	public static void main(String[] args) {
+	// login -> main
+/*	public static void main(String[] args) {
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -51,10 +49,9 @@ public class Main extends JFrame {
 			}
 		});
 	}
-
-	public Main() {
-
-		var = new Variables(new ClientVO(userId, userName));
+*/
+	public Main(UserVO user) {
+		var = new Variables(new ClientVO(user.getID(), user.getUsername()));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1060, 700);
 		contentPane = new JPanel();
@@ -65,6 +62,7 @@ public class Main extends JFrame {
 		contentPane.setLayout(new BorderLayout(5, 5));
 		mainCards = new CardLayout();
 		chatPanelList = new ArrayList<ChatPanel>();
+		setLocationRelativeTo(null);
 
 		// Side Panel
 		sidePanel = new SidePanel(this);
@@ -78,11 +76,10 @@ public class Main extends JFrame {
 
 		// Music Panel
 		musicPanel = new MusicPlayer();
+		musicPanel.setPreferredSize(Variables.MUSIC_PANEL_SIZE);
 		mainPanel.add(musicPanel, BorderLayout.NORTH);
-
-		JList Playlist = new JList();
-		musicPanel.add(Playlist);
-
+		
+		
 		// Home & Chat Panel
 		mainCardPanel = new JPanel();
 		mainCardPanel.setPreferredSize(Variables.CHAT_PANEL_SIZE);
@@ -92,6 +89,8 @@ public class Main extends JFrame {
 		mainCardPanel.add("Home", homePanel);
 		mainPanel.add(mainCardPanel, BorderLayout.CENTER);
 		setMainCard("Home");
+		
+		startClient();
 	}
 
 	private void startClient() {

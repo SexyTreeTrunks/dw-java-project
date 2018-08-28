@@ -28,13 +28,13 @@ import jaco.mp3.player.MP3Player;
 
 public class MusicPlayer extends JPanel implements ActionListener {
 
-	// ¹öÆ°
+	// ï¿½ï¿½Æ°
 	public JButton start_btn, stop_btn, music_plus_btn, music_delete_btn, paused_btn;
 
-	// ÆĞ³Î
+	// ï¿½Ğ³ï¿½
 	public JPanel panel, panel_1, panel_2;
 
-	// Àç»ı ¸ñ·Ï (ÇöÀç Å¬·¡½º »ç¿ë)
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
 	public JList list;
 	public DefaultListModel playlist = new DefaultListModel();
 	public DefaultListModel absolute_path = new DefaultListModel();
@@ -42,14 +42,14 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	// mp3 api
 	public MP3Player mp3 = new MP3Player();
 
-	// ÆÄÀÏ Å½»ö±â
+	// ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½ï¿½ï¿½
 	public JFileChooser fileChooser = new JFileChooser();
-	public FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("mp3ÆÄÀÏ", "mp3");
+	public FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("mp3íŒŒì¼", "mp3");
 
-	// ½º·¹µå (Å¬·¡½º ±¸Çö)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	PlayerThread playerThread;
 
-	// Àç»ó ¹× ÀÏ½ÃÁ¤Áö
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½
 	public boolean paused = false;
 	public boolean playing = false;
 	public boolean stoped = false;
@@ -59,56 +59,64 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	 * Create the panel.
 	 */
 	public MusicPlayer() {
+		setBackground(Color.WHITE);
 
 		setLayout(new BorderLayout(0, 0));
 
 		panel = new JPanel();
+		panel.setBackground(Color.WHITE);
 		add(panel, BorderLayout.EAST);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
 
 		start_btn = new JButton("");
-		start_btn.setIcon(new ImageIcon("..\\MusicPlayer\\src\\images\\play.png"));
+		start_btn.setIcon(new ImageIcon("img\\play.png"));
 		panel.add(start_btn);
 
 		paused_btn = new JButton("");
-		paused_btn.setIcon(new ImageIcon("..\\MusicPlayer\\\\src\\\\images\\pause.png"));
+		paused_btn.setIcon(new ImageIcon("img\\pause.png"));
 		panel.add(paused_btn);
 
 		stop_btn = new JButton("");
-		stop_btn.setIcon(new ImageIcon("..\\MusicPlayer\\src\\images\\stop.png"));
+		stop_btn.setIcon(new ImageIcon("img\\stop.png"));
 		panel.add(stop_btn);
 
 		panel_1 = new JPanel();
+		panel_1.setBackground(Color.WHITE);
 		add(panel_1, BorderLayout.CENTER);
 		panel_1.setLayout(new BorderLayout(0, 0));
 
 		panel_2 = new JPanel();
+		panel_2.setBackground(Color.WHITE);
 		panel_1.add(panel_2, BorderLayout.WEST);
 		panel_2.setLayout(new GridLayout(0, 1, 0, 0));
 
 		music_plus_btn = new JButton("");
-		music_plus_btn.setIcon(new ImageIcon("..\\MusicPlayer\\src\\images\\ipod_add.png"));
+		music_plus_btn.setIcon(new ImageIcon("img\\ipod_add.png"));
 		panel_2.add(music_plus_btn);
 
 		music_delete_btn = new JButton("");
-		music_delete_btn.setIcon(new ImageIcon("..\\MusicPlayer\\src\\images\\ipod_remove.png"));
+		music_delete_btn.setIcon(new ImageIcon("img\\ipod_remove.png"));
 		panel_2.add(music_delete_btn);
 
 		JScrollPane scrollPane = new JScrollPane();
 		panel_1.add(scrollPane, BorderLayout.CENTER);
 
 		JLabel lblNewLabel = new JLabel("\uC74C\uC545\uC7AC\uC0DD\uBAA9\uB85D");
-		lblNewLabel.setToolTipText("");
-		lblNewLabel.setLabelFor(lblNewLabel);
+		JPanel listHeaderPanel = new JPanel();
+		listHeaderPanel.setLayout(new BorderLayout());
+		listHeaderPanel.add(lblNewLabel, BorderLayout.CENTER);
+		listHeaderPanel.setBackground(Color.white);
 		lblNewLabel.setForeground(new Color(0, 0, 0));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("HYÇìµå¶óÀÎM", Font.BOLD, 22));
-		scrollPane.setColumnHeaderView(lblNewLabel);
+		lblNewLabel.setFont(new Font("HYí—¤ë“œë¼ì¸M", Font.BOLD, 22));
+		scrollPane.setColumnHeaderView(listHeaderPanel);
+		scrollPane.setBackground(Color.white);
 
 		list = new JList(playlist);
+		list.setBackground(Color.WHITE);
 		scrollPane.setViewportView(list);
 
-		// ¹öÆ° ÀÌº¥Æ® (¾×¼Ç ¸®½º³Ê)
+		// ï¿½ï¿½Æ° ï¿½Ìºï¿½Æ® (ï¿½×¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 		start_btn.addActionListener(this);
 		stop_btn.addActionListener(this);
 		paused_btn.addActionListener(this);
@@ -167,7 +175,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 
 	}
 
-	// À½¾Ç ÇÃ·¹ÀÌ ÇßÀ» ¶§
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	public void playIt() {
 		current_song = (String) absolute_path.getElementAt(list.getSelectedIndex());
 		playerThread = new PlayerThread();
@@ -175,7 +183,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		playing = true;
 	}
 
-	// À½¾Ç Á¤Áö ÇßÀ» ¶§
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	public void stopIt() {
 		if (playing == true || paused == true) {
 			mp3.stop();
@@ -185,7 +193,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		}
 	}
 
-	// ¾²·¹µå (ÇÃ·¹ÀÌ½Ã »ç¿ëÇÒ ½º·¹µå)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½Ã·ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 	public class PlayerThread extends Thread {
 		public void run() {
 			try {
@@ -197,7 +205,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		}
 	}
 
-	// ¸¶¿ì½º ´õºíÅ¬¸¯ ÀÌº¥Æ®
+	// ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½Å¬ï¿½ï¿½ ï¿½Ìºï¿½Æ®
 	class MouseDoubleClick_List extends MouseAdapter {
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -209,7 +217,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 
 	}
 
-	// ÆÄÀÏ Çü½Ä Á¦ÇÑ
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public class MP3FileFilter implements FileFilter {
 		public final String[] mp3_fileFormat = new String[] { "mp3" };
 

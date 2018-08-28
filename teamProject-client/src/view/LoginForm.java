@@ -28,9 +28,7 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JPasswordField txtpassword;
 	private JButton loginbtn, signbtn;
 	private UserDAO userdao = new UserDAO();
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -56,7 +54,8 @@ public class LoginForm extends JFrame implements ActionListener {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-
+		setLocationRelativeTo(null);
+		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.WHITE);
 		contentPane.add(panel, BorderLayout.CENTER);
@@ -73,30 +72,30 @@ public class LoginForm extends JFrame implements ActionListener {
 		txtpassword.setColumns(10);
 
 		JLabel logolabel = new JLabel("LOGO");
-		logolabel.setIcon(new ImageIcon("C:\\Users\\admin\\Desktop\\이미지\\zzitalk.png"));
+		logolabel.setIcon(new ImageIcon("img\\zzitalk.png"));
 		logolabel.setBounds(167, 102, 208, 67);
 		panel.add(logolabel);
 
-		JLabel pwlabel = new JLabel("New label");
-		pwlabel.setIcon(new ImageIcon("C:\\Users\\admin\\Desktop\\이미지\\pw.png"));
+		JLabel pwlabel = new JLabel("");
+		pwlabel.setIcon(new ImageIcon("img\\pw.png"));
 		pwlabel.setBounds(134, 270, 82, 18);
 		panel.add(pwlabel);
 
-		JLabel idlabel = new JLabel("New label");
-		idlabel.setIcon(new ImageIcon("C:\\Users\\admin\\Desktop\\이미지\\ddi.png"));
-		idlabel.setBounds(149, 224, 57, 15);
+		JLabel idlabel = new JLabel("");
+		idlabel.setIcon(new ImageIcon("img\\id.png"));
+		idlabel.setBounds(149, 224, 82, 15);
 		panel.add(idlabel);
 
 		signbtn = new JButton("s i g n u p");
 		signbtn.setForeground(Color.BLACK);
 		signbtn.setBackground(Color.WHITE);
 		signbtn.setFont(new Font("휴먼고딕", Font.BOLD, 12));
-		signbtn.setBounds(213, 298, 116, 31);
+		signbtn.setBounds(203, 308, 116, 31);
 		panel.add(signbtn);
 
 		loginbtn = new JButton("New button");
-		loginbtn.setIcon(new ImageIcon("C:\\Users\\admin\\Desktop\\이미지\\login.png"));
-		loginbtn.setBounds(350, 239, 142, 31);
+		loginbtn.setIcon(new ImageIcon("img\\login.png"));
+		loginbtn.setBounds(344, 238, 142, 31);
 		panel.add(loginbtn);
 
 		signbtn.addActionListener(this);
@@ -114,7 +113,8 @@ public class LoginForm extends JFrame implements ActionListener {
 			try {
 				if (user != null) {
 					JOptionPane.showMessageDialog(this, "로그인되었습니다.", "login", JOptionPane.OK_OPTION);
-					new Main().setVisible(true);
+					
+					new Main(user).setVisible(true);
 					dispose();
 				} else {
 					JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 일치하지 않습니다.", "login", JOptionPane.ERROR_MESSAGE);

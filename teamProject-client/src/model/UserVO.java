@@ -5,6 +5,16 @@ public class UserVO {
 	private String username;
 	private String password;
 
+	public UserVO()
+	{
+		
+	}
+	
+	public UserVO(String id, String username) {
+		this.id= id;
+		this.username = username;
+	}
+	
 	public String getID() {
 		return id;
 	}
@@ -28,6 +38,4 @@ public class UserVO {
 		// TODO Auto-generated method stub
 		return super.toString();
 	}
-	
-	
 }

@@ -28,10 +28,7 @@ public class signupDialog extends JDialog implements ActionListener {
 	private boolean bool_id = false;
 	private boolean bool_nick = false;
 	private UserDAO userdao = new UserDAO();
-	
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		try {
 			signupDialog dialog = new signupDialog();
@@ -42,9 +39,6 @@ public class signupDialog extends JDialog implements ActionListener {
 		}
 	}
 
-	/**
-	 * Create the dialog.
-	 */
 	public signupDialog() {
 		setTitle("sign up");
 		setBounds(100, 100, 450, 300);
@@ -190,9 +184,9 @@ public class signupDialog extends JDialog implements ActionListener {
 					dispose();
 				if (result > 0) {
 					JOptionPane.showMessageDialog(this,"회원가입이 성공적으로 이루어졌습니다.","sign up", JOptionPane.OK_OPTION);
-					
+					dispose();
 				} else {
-					JOptionPane.showMessageDialog(this, "sad", "sign up", JOptionPane.OK_OPTION);
+					JOptionPane.showMessageDialog(this, "다시 시도해주세요.", "sign up", JOptionPane.OK_OPTION);
 				}
 				
 				} catch (Exception e1) {
