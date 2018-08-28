@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
@@ -70,6 +72,14 @@ public class signupDialog extends JDialog implements ActionListener {
 		txtid.setBounds(139, 24, 116, 21);
 		contentPanel.add(txtid);
 		txtid.setColumns(10);
+		txtid.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				JTextField src = (JTextField) e.getSource();
+				if (src.getText().length() > 20)
+					e.consume();
+			}
+		});
 
 		confirmbtn_id = new JButton("c o n f i r m");
 		confirmbtn_id.setFont(new Font("휴먼고딕", Font.BOLD, 12));
@@ -153,11 +163,12 @@ public class signupDialog extends JDialog implements ActionListener {
 			// 닉네임 중복체크 여부
 			UserVO user = userdao.getUserByUsername(nickname);
 			try {
-				if (user!=null) {
+				if (user != null) {
 					JOptionPane.showMessageDialog(txtnick, "해당 닉네임은 현재 사용중입니다. 다시 작성해주세요.", "sign up",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(this, "사용가능한 닉네임입니다.", "sign up", JOptionPane.OK_OPTION);
+					JOptionPane.showConfirmDialog(this, "사용가능한 닉네임입니다.", "sign up", JOptionPane.OK_OPTION);
+
 					bool_nick = true;
 				}
 			} catch (Exception e1) {
@@ -171,33 +182,33 @@ public class signupDialog extends JDialog implements ActionListener {
 		if (e.getSource().equals(okbtn)) {
 			if ((txtid.getText().isEmpty() == true || txtpassword.getText().isEmpty() == true)
 					|| (txtconfirm.getText().isEmpty() == true || txtnick.getText().isEmpty() == true)) {
-				JOptionPane.showMessageDialog(this,"빈칸이 있습니다.","sign up",JOptionPane.ERROR_MESSAGE);
-			}else if(!bool_id){
-				JOptionPane.showMessageDialog(this,"아이디 중복 확인을 해주세요.","sign up",JOptionPane.ERROR_MESSAGE);	
+				JOptionPane.showMessageDialog(this, "빈칸이 있습니다.", "sign up", JOptionPane.ERROR_MESSAGE);
+			} else if (!bool_id) {
+				JOptionPane.showMessageDialog(this, "아이디 중복 확인을 해주세요.", "sign up", JOptionPane.ERROR_MESSAGE);
+			} else if (!bool_nick) {
+				JOptionPane.showMessageDialog(this, "닉네임 중복 확인을 해주세요.", "sign up", JOptionPane.ERROR_MESSAGE);
 			}
-			else if(!bool_nick) {
-				JOptionPane.showMessageDialog(this,"닉네임 중복 확인을 해주세요.","sign up",JOptionPane.ERROR_MESSAGE);
-			}
-			
+
 			else {
 				try {
-					int result = userdao.user_insert(txtid.getText(), txtnick.getText(), new String(txtpassword.getPassword()));
+					int result = userdao.user_insert(txtid.getText(), txtnick.getText(),
+							new String(txtpassword.getPassword()));
 					dispose();
-				if (result > 0) {
-					JOptionPane.showMessageDialog(this,"회원가입이 성공적으로 이루어졌습니다.","sign up", JOptionPane.OK_OPTION);
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(this, "다시 시도해주세요.", "sign up", JOptionPane.OK_OPTION);
-				}
-				
+					if (result > 0) {
+						JOptionPane.showConfirmDialog(this, "회원가입이 성공적으로 이루어졌습니다.", "sign up", JOptionPane.OK_OPTION);
+						dispose();
+					} else {
+						JOptionPane.showMessageDialog(this, "다시 시도해주세요.", "sign up", JOptionPane.OK_OPTION);
+					}
+
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 
 			}
 
-			}else if(e.getSource()==cancelbtn){
-				this.setVisible(false);
+		} else if (e.getSource() == cancelbtn) {
+			this.setVisible(false);
 
 		}
 	}

@@ -35,7 +35,7 @@ public class SidePanel extends JPanel {
 		main = mainFrame;
 		var = main.getVar();
 		vo = var.getVO();
-		
+
 		setBorder(BorderFactory.createLineBorder(Color.black));
 		setBackground(Color.WHITE);
 		setLayout(new BorderLayout(0, 0));
@@ -51,17 +51,21 @@ public class SidePanel extends JPanel {
 		panel_1.setBackground(Color.WHITE);
 		ChannelUserListPanel.add(panel_1, BorderLayout.NORTH);
 		panel_1.setLayout(new GridLayout(0, 1, 0, 0));
-
+		panel_1.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black));
 		JLabel lblchannelList = new JLabel("채널 접속자");
 		panel_1.add(lblchannelList);
-		lblchannelList.setFont(var.getFont(16));
+		lblchannelList.setFont(var.getFont(18));
 		lblchannelList.setHorizontalAlignment(SwingConstants.CENTER);
 		lblchannelList.setPreferredSize(new Dimension(90, 15));
 
 		JLabel lbluser = new JLabel(var.getVO().getUserName());
 		lbluser.setFont(var.getFont(16));
 		lbluser.setHorizontalAlignment(SwingConstants.CENTER);
-		panel_1.add(lbluser);
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(Color.white);
+		panel_2.add(lbluser);
+		panel_2.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.black));
+		panel_1.add(panel_2);
 
 		JPanel panel = new JPanel();
 		ChannelUserListPanel.add(panel, BorderLayout.CENTER);
@@ -75,30 +79,30 @@ public class SidePanel extends JPanel {
 					String roomName = list.getSelectedValue();
 					var.getVO().setconnectRoom(roomName);
 					main.addChatPanel(roomName);
-					main.setMainCard("Chat_"+roomName);
+					main.setMainCard("Chat_" + roomName);
 					list.clearSelection();
 				}
 			}
 		});
 		list.setFixedCellHeight(30);
 		list.setFont(var.getFont(14));
-		list.setBorder(new EmptyBorder(10,10, 10, 10));
+		list.setBorder(new EmptyBorder(10, 10, 10, 10));
 		list.setCellRenderer(getRenderer());
 		panel.add(list, BorderLayout.CENTER);
 	}
-	
-    private ListCellRenderer<? super String> getRenderer() {
-        return new DefaultListCellRenderer(){
-            @Override
-            public Component getListCellRendererComponent(JList<?> list,
-                    Object value, int index, boolean isSelected,
-                    boolean cellHasFocus) {
-                JLabel listCellRendererComponent = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,cellHasFocus);
-                listCellRendererComponent.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,Color.GRAY));
-                return listCellRendererComponent;
-            }
-        };
-    }
+
+	private ListCellRenderer<? super String> getRenderer() {
+		return new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				JLabel listCellRendererComponent = (JLabel) super.getListCellRendererComponent(list, value, index,
+						isSelected, cellHasFocus);
+				listCellRendererComponent.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
+				return listCellRendererComponent;
+			}
+		};
+	}
 
 	public void changeUserList(String data) {
 		// userList = Client's User List
@@ -126,7 +130,7 @@ public class SidePanel extends JPanel {
 					main.removeChatPanel(s);
 				}
 			}
-			
+
 			// Connected Add
 			for (String client : clientList)
 				if (!userList.contains(client))

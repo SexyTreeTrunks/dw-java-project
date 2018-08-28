@@ -40,6 +40,7 @@ public class ChatPanel extends JPanel {
 	private Main main;
 	private Variables var;
 	public String roomName;
+	private int unreadChat;
 
 	private JTextPane chatViewTextPane;
 	private JTextArea textAreaChatSend;
@@ -50,6 +51,7 @@ public class ChatPanel extends JPanel {
 		var = main.getVar();
 		var.getVO().setconnectRoom(connectRoom);
 		roomName = connectRoom;
+		unreadChat = 0;
 		setLayout(new BorderLayout(0, 0));
 		setPreferredSize(Variables.CHAT_PANEL_SIZE);
 
@@ -59,7 +61,8 @@ public class ChatPanel extends JPanel {
 		chatInfoPanel.setLayout(new BoxLayout(chatInfoPanel, BoxLayout.X_AXIS));
 
 		JLabel lblLeave = new JLabel();
-		lblLeave.setIcon(new ImageIcon("img/white_left_arrow.png"));
+		lblLeave.setIcon(new ImageIcon("img/leave_room.png"));
+		lblLeave.setBorder(new EmptyBorder(10, 15, 10, 15));
 		chatInfoPanel.add(lblLeave);
 		lblLeave.addMouseListener(new MouseAdapter() {
 			@Override
@@ -70,7 +73,6 @@ public class ChatPanel extends JPanel {
 
 		lblChatName = new JLabel(connectRoom);
 		lblChatName.setFont(var.getFont(14));
-		lblChatName.setBorder(new EmptyBorder(0, 10, 0, 0));
 		chatInfoPanel.add(lblChatName);
 		chatInfoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.lightGray));
 		JPanel chatViewPanel = new JPanel();

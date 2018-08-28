@@ -175,7 +175,7 @@ public class Main extends JFrame {
 				if (c.roomName.equals(message[1]))
 					c.chatReceive(data);
 		}
-		
+		toFront();
 	}
 
 	public void chatSend(String chat) {
@@ -235,9 +235,8 @@ public class Main extends JFrame {
 			if (c.roomName.equals(roomName))
 				contain = true;
 
-		if (contain) {
-
-		} else {
+		// Already Exist
+		if (!contain) {
 			ChatPanel chatPanel = new ChatPanel(this, roomName);
 			chatPanelList.add(chatPanel);
 			mainCardPanel.add("Chat_" + roomName, chatPanel);
@@ -245,15 +244,21 @@ public class Main extends JFrame {
 		}
 	}
 
-	public void removeChatPanel(String roomName) {
-		setMainCard("Home");
+	public void removeChatPanel(String user) {
+		
 		Iterator<ChatPanel> iter = chatPanelList.iterator();
 		while (iter.hasNext()) {
 			ChatPanel c = iter.next();
-			if (c.roomName.equals(roomName)) {
+			if (c.roomName.equals(user)) {
 				iter.remove();
-				homePanel.removeRoom(roomName);
+				homePanel.removeRoom(user);
 			}
+		}
+		
+		if (mainCardName.replaceAll("Chat_", "").equals(user)) {
+			ChatDisconnectDialog dialog = new ChatDisconnectDialog(user);
+			dialog.setVisible(true);
+			setMainCard("Home");
 		}
 	}
 }
