@@ -19,6 +19,10 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Font;
 
 public class LoginForm extends JFrame implements ActionListener {
@@ -55,7 +59,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		setLocationRelativeTo(null);
-		
+
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.WHITE);
 		contentPane.add(panel, BorderLayout.CENTER);
@@ -70,6 +74,14 @@ public class LoginForm extends JFrame implements ActionListener {
 		txtpassword.setBounds(203, 267, 116, 21);
 		panel.add(txtpassword);
 		txtpassword.setColumns(10);
+		txtpassword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					auth_login();
+				}
+			}
+		});
 
 		JLabel logolabel = new JLabel("LOGO");
 		logolabel.setIcon(new ImageIcon("img\\zzitalk.png"));
@@ -100,36 +112,44 @@ public class LoginForm extends JFrame implements ActionListener {
 
 		signbtn.addActionListener(this);
 		loginbtn.addActionListener(this);
+		
+
+		addWindowFocusListener(new WindowAdapter() {
+		    public void windowGainedFocus(WindowEvent e) {
+		        txtid.requestFocusInWindow();
+		        txtid.setNextFocusableComponent(txtpassword);
+		    }
+		});
 	}
 
 	@Override // 로그인 가능 여부
 	public void actionPerformed(ActionEvent e) {
-		String id = txtid.getText(); // id 와 password text 얻어오기
-		String password = txtpassword.getText();
-		
+
 		if (e.getSource().equals(loginbtn)) {
-			UserVO user = userdao.getUser(id, password);
-			try {
-				if (user != null) {
-					JOptionPane.showMessageDialog(this, "로그인되었습니다.", "login", JOptionPane.OK_OPTION);
-					
-					new Main(user).setVisible(true);
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 일치하지 않습니다.", "login", JOptionPane.ERROR_MESSAGE);
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
+			auth_login();
 		} else {
 			signupDialog sign = new signupDialog();
 			sign.setVisible(true);
 		}
 	}
-	
-	// password 와 confirmpassword가 다르다면
-	/*
-	 * if(txtpassword.getText().isEmpty() == txtconfirm.getText().isEmpty()) {
-	 * JOptionPane.showInputDialog("비밀번호가 일치하지않습니다.",JOptionPane.ERROR_MESSAGE); } }
-	 */
+
+	public void auth_login() {
+		String id = txtid.getText(); // id 와 password text 얻어오기
+		String password = txtpassword.getText();
+
+		UserVO user = userdao.getUser(id, password);
+		try {
+			if (user != null) {
+				JOptionPane.showMessageDialog(this, "로그인되었습니다.", "login", JOptionPane.OK_OPTION);
+
+				new Main(user).setVisible(true);
+				dispose();
+			} else {
+				JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 일치하지 않습니다.", "login", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+
 }
