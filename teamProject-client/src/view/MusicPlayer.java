@@ -124,6 +124,10 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		stop_btn.addActionListener(this);
 		music_delete_btn.addActionListener(this);
 		music_plus_btn.addActionListener(this);
+		
+		if(mp3.isStopped() == true && mp3.isPaused() == true) {
+			start_btn.setIcon(new ImageIcon("img/play.png"));
+		}
 
 	}
 
@@ -186,6 +190,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 			playing = false;
 			// 일시 정지 후 재시작
 		} else if (paused == true && playing == false) {
+			start_btn.setIcon(new ImageIcon("img/pause.png"));
 			mp3.play();
 			paused = false;
 			playing = true;
