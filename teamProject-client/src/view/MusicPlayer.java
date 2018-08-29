@@ -31,8 +31,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import jaco.mp3.player.MP3Player;
 import sun.java2d.pipe.ValidatePipe;
 
-
-
 public class MusicPlayer extends JPanel implements ActionListener {
 
 	// ��ư
@@ -45,8 +43,8 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	public JList list;
 	public DefaultListModel playList = new DefaultListModel();
 	public DefaultListModel absolutePath = new DefaultListModel();
-	//public Vector<String> playList = new Vector<>();
-	//public Vector<String> absolutePath = new Vector<>();
+	// public Vector<String> playList = new Vector<>();
+	// public Vector<String> absolutePath = new Vector<>();
 
 	// mp3 api
 	public MP3Player mp3 = new MP3Player();
@@ -58,12 +56,11 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	// ������ (Ŭ���� ����)
 
 	// ��� �� �Ͻ�����
-	public boolean paused = false;
-	public boolean playing = false;
-	public boolean stoped = false;
+	public boolean paused;
+	public boolean playing;
+	public boolean stoped;
+	public boolean add = false;
 	public String current_song = "";
-	
-	
 
 	/**
 	 * Create the panel.
@@ -132,78 +129,65 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		paused_btn.addActionListener(this);
 		music_delete_btn.addActionListener(this);
 		music_plus_btn.addActionListener(this);
-		
-		
+
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		if(e.getSource() == music_plus_btn) {
-			addMp3PlayerListener();
-		}else if(e.getSource() == music_delete_btn) {
-			removeMp3PlayerListener();
-		}else if(e.getSource() == start_btn) {
-			try {
-				if(list.getSelectedIndex() == -1) {
-					mp3.play();
-			}else {
-					mp3.stop();
-					MP3Player mp3Two = new MP3Player();
-					int selected = list.getSelectedIndex();
-					String selected2 = (String) playList.get(selected);
-					for(int x =0; x<mp3.getPlayList().size(); x++) {
-						if(mp3.getPlayList().get(selected).equals(selected2)) {
-							File file = (File) mp3.getPlayList().get(x);
-							mp3Two.addToPlayList(file);
-						}
-						mp3Two.play();
-					}
-			}
-			} catch (ArrayIndexOutOfBoundsException e3) {
-			
-			} catch (Exception e2) {}
-			
-		}else if(e.getSource() == paused_btn) {
-			mp3.pause();
-		}else if(e.getSource() == stop_btn) {
-			mp3.stop();
-		}
-	}
-	
 	// 재생목록 추가 메서드
-	public void addMp3PlayerListener () {
+	public void addMp3PlayerListener() {
 		fileChooser.setDialogTitle("Open Audio File");
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "//" + "Desktop"));
 		fileChooser.setMultiSelectionEnabled(true);
 		int option = fileChooser.showOpenDialog(this);
 		if (option == fileChooser.APPROVE_OPTION) {
-			
-			File selectedFile[] = fileChooser.getSelectedFiles();
-			
-			
-				for(int x = 0; x<selectedFile.length; x++) {
+			if (add == true) {
+				playing = false;
+				stoped = false;
+
+				File selectedFile[] = fileChooser.getSelectedFiles();
+
+				for (int x = 0; x < selectedFile.length; x++) {
 					File file = selectedFile[x];
 					mp3.addToPlayList(file);
 					playList.addElement(file.getName());
 				}
-			
-			
-			
+			} else {
+
+			}
+
 		}
+
 	}
-	
+
 	// 재생목록 선택 및 전체 삭제
 	public void removeMp3PlayerListener() {
-		if(list.getSelectedIndex() == 0 || list.getSelectedIndex() > 0) {
+		if (list.getSelectedIndex() == 0 || list.getSelectedIndex() > 0) {
 			mp3.remove(list.getSelectedIndex());
 			playList.remove(list.getSelectedIndex());
-		}else {
+		} else {
 			mp3.stop();
 			mp3.removeAll();
 			playList.clear();
 		}
 	}
-	
-	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+
+		if (e.getSource() == music_plus_btn) {
+			add = true;
+			addMp3PlayerListener();
+		} else if (e.getSource() == music_delete_btn) {
+			removeMp3PlayerListener();
+		} else if (e.getSource() == start_btn) {
+			if (playing == false && stoped == false && add == true) {
+				mp3.play();
+			}
+		} else if (e.getSource() == paused_btn) {
+			mp3.pause();
+			paused = true;
+		} else if (e.getSource() == stop_btn) {
+			mp3.stop();
+		}
+	}
+
 }
