@@ -263,14 +263,12 @@ public class ServerMain {
 
 		void roomListRefresh() {
 			String data = CLIENT_ROOM_LIST;
-
+			if(roomList.size() == 0)
+				return;
 			// roomNumber_roomName_roomCurrent_roomLimit_roomPersonList
-			for (Room room : roomList) {
-				data += "|" + room.roomNumber + "_" + room.roomName + "_" + room.personCurrent + "_ " + room.personLimit
-						+ "_";
-				for (String userName : room.persons)
-					data += "-" + userName;
-			}
+			for (Room room : roomList)
+				data += getRoomData(data, room);
+		
 
 			send(data);
 		}

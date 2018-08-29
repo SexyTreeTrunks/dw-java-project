@@ -34,6 +34,7 @@ public class Main extends JFrame {
 	private String mainCardName;
 
 	private ArrayList<ChatPanel> chatPanelList;
+	private ArrayList<ChatRoomPanel> chatRoomPanelList;
 
 	// login -> main
 	/*
@@ -149,6 +150,12 @@ public class Main extends JFrame {
 						else if (data.startsWith(Variables.CLIENT_USER_LIST))
 							sidePanel.changeUserList(data);
 
+						else if (data.startsWith(Variables.CLIENT_ROOM_LIST) ||
+								data.startsWith(Variables.CLIENT_ROOM_UPDATE) ||
+								data.startsWith(Variables.CLIENT_ROOM_ADD) ||
+								data.startsWith(Variables.CLIENT_ROOM_REMOVE)) {
+							changeRoomList(data);
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 						stopClient();
@@ -245,7 +252,7 @@ public class Main extends JFrame {
 	}
 
 	public void removeChatPanel(String user) {
-		
+
 		Iterator<ChatPanel> iter = chatPanelList.iterator();
 		while (iter.hasNext()) {
 			ChatPanel c = iter.next();
@@ -254,7 +261,7 @@ public class Main extends JFrame {
 				homePanel.removeRoom(user);
 			}
 		}
-		
+
 		if (mainCardName.replaceAll("Chat_", "").equals(user)) {
 			ChatDisconnectDialog dialog = new ChatDisconnectDialog(user);
 			dialog.setVisible(true);
@@ -262,6 +269,22 @@ public class Main extends JFrame {
 		}
 	}
 	
+	public void changeRoomList(String data) {
+		String[] dataArr = data.split("\\|");
+		
+		if(dataArr[0].equals(Variables.CLIENT_ROOM_LIST))
+			homePanel.addRoomList(dataArr);
+
+		else if(dataArr[0].equals(Variables.CLIENT_ROOM_ADD))
+			homePanel.addRoom(dataArr);
+		
+		else if(dataArr[0].equals(Variables.CLIENT_ROOM_REMOVE))
+			homePanel.removeRoom(dataArr);
+
+		else if(dataArr[0].equals(Variables.CLIENT_ROOM_UPDATE))
+			homePanel.updateRoom(dataArr);
+	}
+
 	public void createRoom(String roomName, int roomLimit) {
 		
 	}
