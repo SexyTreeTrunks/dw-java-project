@@ -23,7 +23,6 @@ import sun.security.ec.ECDHKeyAgreement;
 
 import java.awt.Font;
 
-
 public class signupDialog extends JDialog implements ActionListener {
 
 	private final JPanel contentPanel = new JPanel();
@@ -239,7 +238,7 @@ public class signupDialog extends JDialog implements ActionListener {
 				try {
 					int result = userdao.user_insert(txtid.getText(), txtnick.getText(), txtpassword.getText());
 					if (result > 0) {
-						JOptionPane.showMessageDialog(this, "회원가입이 성공적으로 이루어졌습니다.", "sign up", JOptionPane.OK_OPTION);
+						JOptionPane.showMessageDialog(this, "회원가입이 성공적으로 이루어졌습니다.", "sign up", JOptionPane.INFORMATION_MESSAGE);
 						dispose();
 					} else {
 						JOptionPane.showMessageDialog(this, "다시 시도해주세요.", "sign up", JOptionPane.ERROR_MESSAGE);

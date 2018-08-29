@@ -140,11 +140,11 @@ public class LoginForm extends JFrame implements ActionListener {
 		UserVO user = userdao.getUser(id, password);
 		try {
 			if (user != null) {
-				JOptionPane.showMessageDialog(this, "로그인되었습니다.", "login", JOptionPane.OK_OPTION);
+				JOptionPane.showMessageDialog(this, "로그인되었습니다.", "login", JOptionPane.INFORMATION_MESSAGE);
 
 				new Main(user).setVisible(true);
 				dispose();
-			} else {
+			} else { 
 				JOptionPane.showMessageDialog(this, "아이디 또는 비밀번호가 일치하지 않습니다.", "login", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
