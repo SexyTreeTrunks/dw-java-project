@@ -54,8 +54,11 @@ public class UserDAO {
 		int result = 0;
 		try {
 			conn = getConnection();
-			String sql = "insert into usertbl values ('"+ id +"', '" +username+ "',password('" +password+ "'))";
+			String sql = "insert into usertbl values (?, ? ,password(?))";
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.setString(2, username);
+			pstmt.setString(3, password);
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -69,10 +72,12 @@ public class UserDAO {
 	//select
 	public UserVO getUser(String id, String password) {
 		conn = getConnection();
-		String sql = "select * from usertbl where id = '" + id + "' and password = password('" + password + "')";
+		String sql = "select * from usertbl where id =? and password = password(?)";
 		UserVO vo = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.setString(2, password);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				vo = new UserVO();
