@@ -29,11 +29,9 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jaco.mp3.player.MP3Player;
-//import javafx.scene.media.Media;
-//import javafx.scene.media.MediaPlayer;
 import sun.java2d.pipe.ValidatePipe;
-import view.MusicPlayer2.MP3FileFilter;
-import view.MusicPlayer2.PlayerThread;
+
+
 
 public class MusicPlayer extends JPanel implements ActionListener {
 
@@ -64,7 +62,6 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	public boolean playing = false;
 	public boolean stoped = false;
 	public String current_song = "";
-	PlayerThread playerThread;
 	
 	
 
