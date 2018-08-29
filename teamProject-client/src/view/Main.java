@@ -261,4 +261,8 @@ public class Main extends JFrame {
 			setMainCard("Home");
 		}
 	}
+	
+	public void createRoom(String roomName, int roomLimit) {
+		
+	}
 }
