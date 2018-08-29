@@ -155,44 +155,59 @@ public class MusicPlayer extends JPanel implements ActionListener {
 
 	// 재생목록 선택 및 전체 삭제
 	public void removeMp3PlayerListener() {
-		if (list.getSelectedIndex() == 0 || list.getSelectedIndex() > 0) {
-			mp3.remove(list.getSelectedIndex());
-			playList.remove(list.getSelectedIndex());
+		if (list.getSelectedIndex() >= 0) {
+			try {
+				mp3.remove(list.getSelectedIndex());
+				playList.remove(list.getSelectedIndex());
+			} catch (Exception e) {
+			}
 		} else {
+			start_btn.setIcon(new ImageIcon("img/play.png"));
 			mp3.stop();
 			mp3.removeAll();
 			playList.clear();
 		}
 	}
 
+	// 재생 메서드
+	public void PlayMp3PlayerListener() {
+		// 처음 시작 시 재생목록 없으면 무반응, 있으면 첨부터 시작
+		if (playing == false && stoped == false && add == true) {
+			start_btn.setIcon(new ImageIcon("img/pause.png"));
+			mp3.play();
+			playing = true;
+			paused = false;
+
+			// 일시 정지 했을 때
+		} else if (paused == false && playing == true) {
+			start_btn.setIcon(new ImageIcon("img/play.png"));
+			mp3.pause();
+			paused = true;
+			playing = false;
+			// 일시 정지 후 재시작
+		} else if (paused == true && playing == false) {
+			mp3.play();
+			paused = false;
+			playing = true;
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		if (e.getSource() == music_plus_btn) {
-			add = true;
-			addMp3PlayerListener();
-		} else if (e.getSource() == music_delete_btn) {
+		if (e.getSource() == music_delete_btn) {
 			removeMp3PlayerListener();
 		} else if (e.getSource() == start_btn) {
-			if (playing == false && stoped == false && add == true) {
-				start_btn.setIcon(new ImageIcon("img/pause.png"));
-				mp3.play();
-				playing = true;
-				paused = false;
-			}else if(paused == false && playing == true){
-				start_btn.setIcon(new ImageIcon("img/play.png"));
-				mp3.pause();
-				paused = true;
-				playing = false;
-			}else if(paused == true && playing == false) {
-				mp3.play();
-			}
+			PlayMp3PlayerListener();
+		} else if (e.getSource() == music_plus_btn) {
+			add = true;
+			addMp3PlayerListener();
 		} else if (e.getSource() == stop_btn) {
 			start_btn.setIcon(new ImageIcon("img/play.png"));
 			mp3.stop();
 			playing = false;
 			stoped = false;
 		}
-	}
 
+	}
 }
