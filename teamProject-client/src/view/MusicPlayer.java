@@ -34,7 +34,7 @@ import sun.java2d.pipe.ValidatePipe;
 public class MusicPlayer extends JPanel implements ActionListener {
 
 	// ��ư
-	public JButton start_btn, stop_btn, music_plus_btn, music_delete_btn, paused_btn;
+	public JButton start_btn, stop_btn, music_plus_btn, music_delete_btn;
 
 	// �г�
 	public JPanel panel, panel_1, panel_2;
@@ -79,10 +79,6 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		start_btn.setIcon(new ImageIcon("img\\play.png"));
 		panel.add(start_btn);
 
-		paused_btn = new JButton("");
-		paused_btn.setIcon(new ImageIcon("img\\pause.png"));
-		panel.add(paused_btn);
-
 		stop_btn = new JButton("");
 		stop_btn.setIcon(new ImageIcon("img\\stop.png"));
 		panel.add(stop_btn);
@@ -126,7 +122,6 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		// ��ư �̺�Ʈ (�׼� ������)
 		start_btn.addActionListener(this);
 		stop_btn.addActionListener(this);
-		paused_btn.addActionListener(this);
 		music_delete_btn.addActionListener(this);
 		music_plus_btn.addActionListener(this);
 
@@ -180,13 +175,23 @@ public class MusicPlayer extends JPanel implements ActionListener {
 			removeMp3PlayerListener();
 		} else if (e.getSource() == start_btn) {
 			if (playing == false && stoped == false && add == true) {
+				start_btn.setIcon(new ImageIcon("img/pause.png"));
+				mp3.play();
+				playing = true;
+				paused = false;
+			}else if(paused == false && playing == true){
+				start_btn.setIcon(new ImageIcon("img/play.png"));
+				mp3.pause();
+				paused = true;
+				playing = false;
+			}else if(paused == true && playing == false) {
 				mp3.play();
 			}
-		} else if (e.getSource() == paused_btn) {
-			mp3.pause();
-			paused = true;
 		} else if (e.getSource() == stop_btn) {
+			start_btn.setIcon(new ImageIcon("img/play.png"));
 			mp3.stop();
+			playing = false;
+			stoped = false;
 		}
 	}
 
