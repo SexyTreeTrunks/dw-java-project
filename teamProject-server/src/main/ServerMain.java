@@ -176,6 +176,7 @@ public class ServerMain {
 						sc.write(byteBuffer);
 					} catch (Exception e) {
 						try {
+							e.printStackTrace();
 							System.out.println("Client Not Connected" + sc.getRemoteAddress() + " : "
 									+ Thread.currentThread().getName());
 
@@ -194,7 +195,7 @@ public class ServerMain {
 
 		void chatSend(String data) {
 			String[] dataArr = data.split("\\|");
-			
+
 			if (dataArr[0].equals(CLIENT_TEXT_SEND)) {
 				String sender = dataArr[1];
 				String receiver = dataArr[2];
@@ -209,7 +210,7 @@ public class ServerMain {
 				// 1:1 chat
 				if (!receiver.startsWith("Room_"))
 					clientSend(message, receiver);
-				
+
 				// 1:n chat
 				else
 					roomSend(message, Integer.parseInt(receiver.replaceAll("Room_", "")));
@@ -217,7 +218,6 @@ public class ServerMain {
 		}
 
 		void clientListAdd(String data) {
-
 			// Client add
 			String[] userData = data.split("\\|");
 			if (userData[0].equals(CLIENT_USER_DATA)) {
@@ -263,12 +263,11 @@ public class ServerMain {
 
 		void roomListRefresh() {
 			String data = CLIENT_ROOM_LIST;
-			if(roomList.size() == 0)
+			if (roomList.size() == 0)
 				return;
 			// roomNumber_roomName_roomCurrent_roomLimit_roomPersonList
 			for (Room room : roomList)
 				data += getRoomData(data, room);
-		
 
 			send(data);
 		}
@@ -324,45 +323,72 @@ public class ServerMain {
 		}
 
 		String getRoomData(String data, Room room) {
-			data += "|" + room.roomNumber + "_" + room.roomName + "_" + room.personCurrent + "_ " + room.personLimit
-					+ "_";
+			data += "|" + room.roomNumber + "" + room.roomName + "" + Integer.toString(room.personCurrent) + ""
+					+ Integer.toString(room.personLimit) + "";
 			for (String userName : room.persons)
-				data += "-" + userName;
+				data += "" + userName;
 
 			return data;
 		}
-		
+
 		Room getRoomByNumber(int roomNumber) {
-			for(Room room : roomList)
-				if(room.roomNumber == roomNumber)
+			for (Room room : roomList)
+				if (room.roomNumber == roomNumber)
 					return room;
-			
+
 			return null;
 		}
 
 		void roomSend(String message, int roomNumber) {
 			clientSend(message, getRoomByNumber(roomNumber).persons);
 		}
-		
 
 		// Client All Send
 		void clientSend(String data) {
-			for (Client client : connections)
-				client.send(data);
+			Runnable runnable = new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						
+						for (Client client : connections)
+							client.send(data);
+					} catch (Exception e) {
+						try {
+							e.printStackTrace();
+							System.out.println("Client Not Connected" + sc.getRemoteAddress() + " : "
+									+ Thread.currentThread().getName());
+
+							connections.remove(Client.this);
+							sc.close();
+							clientListRefresh();
+
+						} catch (Exception e2) {
+						}
+					}
+				}
+			};
+
+			exeService.submit(runnable);
 		}
 
 		// Client Room Send
 		void clientSend(String data, ArrayList<String> persons) {
 			for (Client client : connections)
-				if (persons.contains(client.userName))
+				if (persons.contains(client.userName)) {
 					client.send(data);
+					break;
+				}
+
 		}
 
 		// Client 1:1 Send
 		void clientSend(String data, String userName) {
 			for (Client client : connections)
-				if (client.userName.equals(userName))
+				if (client.userName.equals(userName)) {
 					client.send(data);
+					break;
+				}
 		}
 	}
 

@@ -28,7 +28,7 @@ public class HomeRoomPanel extends JPanel {
 
 	public void init() {
 		setLayout(new BorderLayout(0, 0));
-		
+		roomChatCount= 0;
 		lblRoom = new JLabel(room.roomName);
 		lblChatCount = new JLabel("");
 		lblRoom.setFont(new Font("맑은 고딕", Font.PLAIN, 16));

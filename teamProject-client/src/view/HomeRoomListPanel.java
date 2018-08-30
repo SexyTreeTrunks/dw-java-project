@@ -12,11 +12,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.mysql.fabric.xmlrpc.base.Array;
+
 public class HomeRoomListPanel extends JPanel {
 
 	private Main main;
 	private Variables var;
-	private ArrayList<String> roomList;
+	private ArrayList<String> roomListOne;
+	private ArrayList<Room> roomList;
 	private ArrayList<HomeRoomPanel> roomPanelList;
 
 	private JPanel homeRoomLeftPanel, homeRoomRightPanel;
@@ -24,6 +27,8 @@ public class HomeRoomListPanel extends JPanel {
 	public int roomListNumber;
 
 	public HomeRoomListPanel() {
+		roomList = new ArrayList<>();
+
 		init();
 	}
 
@@ -34,7 +39,7 @@ public class HomeRoomListPanel extends JPanel {
 		init();
 	}
 
-	public HomeRoomListPanel(Main mainFrame, ArrayList<String> roomList) {
+	public HomeRoomListPanel(Main mainFrame, ArrayList<Room> roomList) {
 		main = mainFrame;
 		var = main.getVar();
 		this.roomList = roomList;
@@ -93,50 +98,66 @@ public class HomeRoomListPanel extends JPanel {
 		});
 	}
 
-	public int addRoom(String roomName) {
-		if(!roomList.contains(roomName)) {
-			roomList.add(roomName);
+	public int addRoom(Room room) {
+		if (!roomList.contains(room)) {
+			roomList.add(room);
+			setRoomPanel(room);
 			return 1;
 		}
-		
+
 		else
 			return 0;
+	}
+
+	public void addRoom(String roomName) {
+		if (!roomListOne.contains(roomName))
+			roomListOne.add(roomName);
+
 	}
 
 	public void removeRoom(String roomName) {
 		String roomN;
 		HomeRoomPanel roomPanel;
 
-		Iterator<String> iterStr = roomList.iterator();
-		Iterator<HomeRoomPanel> iterRoom = roomPanelList.iterator();
+		Iterator<Room> iterRoom = roomList.iterator();
+		Iterator<HomeRoomPanel> iterPanel = roomPanelList.iterator();
 
-		while (iterStr.hasNext()) {
-			roomN = iterStr.next();
+		while (iterRoom.hasNext()) {
+			roomN = iterRoom.next().roomName;
 			if (roomN.equals(roomName)) {
-				iterStr.remove();
+				iterRoom.remove();
 				break;
 			}
 
 		}
 
-		while (iterRoom.hasNext()) {
-			roomPanel = iterRoom.next();
+		while (iterPanel.hasNext()) {
+			roomPanel = iterPanel.next();
 			if (roomPanel.room.roomName.equals(roomName)) {
-				iterRoom.remove();
+				iterPanel.remove();
 
-				if(roomPanel.roomSequence < 5)
+				if (roomPanel.roomSequence < 5)
 					homeRoomLeftPanel.remove(roomPanel);
-				
-				else 
+
+				else
 					homeRoomRightPanel.remove(roomPanel);
-				
+
 				createRoomPanel(roomPanel.roomSequence);
 				break;
 			}
 		}
 	}
 
-	public ArrayList<String> getRoomList() {
+	public void setRoomPanel(Room room) {
+		for (HomeRoomPanel panel : roomPanelList) {
+			if (panel.room.roomName.equals("")) {
+				panel.room = room;
+				panel.lblRoom.setText(panel.room.roomName);
+			}
+		}
+	}
+
+	public ArrayList<Room> getRoomList() {
 		return roomList;
 	}
 }

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -98,7 +99,7 @@ public class Main extends JFrame {
 					// textArea_ChatView.append("서버에 접속하셨습니다.");
 
 					// userID, userName
-					dataSend();
+					userDataSend();
 				} catch (Exception e) {
 					System.out.println(e);
 					if (socketChannel.isOpen())
@@ -106,9 +107,7 @@ public class Main extends JFrame {
 
 					return;
 				}
-
 				receive();
-
 			}
 		};
 		thread.start();
@@ -120,7 +119,6 @@ public class Main extends JFrame {
 			if (socketChannel != null && socketChannel.isOpen())
 				socketChannel.close();
 
-			// textArea_ChatView.append(System.lineSeparator() + "서버와 연결이 끊어졌습니다.");
 		} catch (IOException e) {
 		}
 
@@ -132,7 +130,7 @@ public class Main extends JFrame {
 			public void run() {
 				while (true) {
 					try {
-						ByteBuffer byteBuffer = ByteBuffer.allocate(100);
+						ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
 
 						int byteCount = socketChannel.read(byteBuffer);
 						if (byteCount == -1)
@@ -150,10 +148,10 @@ public class Main extends JFrame {
 						else if (data.startsWith(Variables.CLIENT_USER_LIST))
 							sidePanel.changeUserList(data);
 
-						else if (data.startsWith(Variables.CLIENT_ROOM_LIST) ||
-								data.startsWith(Variables.CLIENT_ROOM_UPDATE) ||
-								data.startsWith(Variables.CLIENT_ROOM_ADD) ||
-								data.startsWith(Variables.CLIENT_ROOM_REMOVE)) {
+						else if (data.startsWith(Variables.CLIENT_ROOM_LIST)
+								|| data.startsWith(Variables.CLIENT_ROOM_UPDATE)
+								|| data.startsWith(Variables.CLIENT_ROOM_ADD)
+								|| data.startsWith(Variables.CLIENT_ROOM_REMOVE)) {
 							changeRoomList(data);
 						}
 					} catch (Exception e) {
@@ -186,20 +184,27 @@ public class Main extends JFrame {
 	}
 
 	public void chatSend(String chat) {
+		if (var.getVO().getconnectRoom() != null && !chat.equals("")) {
+			String data = Variables.CLIENT_TEXT_SEND + "|" + var.getVO().getUserName() + "|"
+					+ var.getVO().getconnectRoom() + "|" + chat;
+			
+			send(data);
+		}
+	}
+	
+	public void chatRoomSend(String chat) {
+		
+	}
+
+	private void send(String data) {
 		Thread thread = new Thread() {
 			@Override
 			public void run() {
 				try {
-					if (var.getVO().getconnectRoom() != null && !chat.equals("")) {
-						String data = Variables.CLIENT_TEXT_SEND + "|" + var.getVO().getUserName() + "|"
-								+ var.getVO().getconnectRoom() + "|" + chat;
 
-						Charset charset = Charset.forName("UTF-8");
-						ByteBuffer byteBuffer = charset.encode(data);
-						socketChannel.write(byteBuffer);
-						// textArea_ChatView.append(System.lineSeparator() + "나(" + vo.getUserName() +
-						// ") : " + chat);
-					}
+					Charset charset = Charset.forName("UTF-8");
+					ByteBuffer byteBuffer = charset.encode(data);
+					socketChannel.write(byteBuffer);
 				} catch (Exception e) {
 					stopClient();
 				}
@@ -210,20 +215,8 @@ public class Main extends JFrame {
 		thread.start();
 	}
 
-	private void dataSend() {
-		Thread thread = new Thread() {
-			@Override
-			public void run() {
-				try {
-					Charset charset = Charset.forName("UTF-8");
-					ByteBuffer byteBuffer = charset.encode(var.getVO().toString());
-					socketChannel.write(byteBuffer);
-				} catch (Exception e) {
-					stopClient();
-				}
-			}
-		};
-		thread.start();
+	private void userDataSend() {
+		send(var.getVO().toString());
 	}
 
 	public Variables getVar() {
@@ -268,24 +261,33 @@ public class Main extends JFrame {
 			setMainCard("Home");
 		}
 	}
-	
+
 	public void changeRoomList(String data) {
 		String[] dataArr = data.split("\\|");
-		
-		if(dataArr[0].equals(Variables.CLIENT_ROOM_LIST))
+
+		if (dataArr[0].equals(Variables.CLIENT_ROOM_LIST))
 			homePanel.addRoomList(dataArr);
 
-		else if(dataArr[0].equals(Variables.CLIENT_ROOM_ADD))
+		else if (dataArr[0].equals(Variables.CLIENT_ROOM_ADD))
 			homePanel.addRoom(dataArr);
-		
-		else if(dataArr[0].equals(Variables.CLIENT_ROOM_REMOVE))
+
+		else if (dataArr[0].equals(Variables.CLIENT_ROOM_REMOVE))
 			homePanel.removeRoom(dataArr);
 
-		else if(dataArr[0].equals(Variables.CLIENT_ROOM_UPDATE))
+		else if (dataArr[0].equals(Variables.CLIENT_ROOM_UPDATE))
 			homePanel.updateRoom(dataArr);
 	}
 
 	public void createRoom(String roomName, int roomLimit) {
+		for(Room room :homePanel.getrRoomList()) {
+			if(room.roomName.equals(roomName)) {
+				JOptionPane.showMessageDialog(this, "이미 동일한 방 이름이 있습니다.", "실패", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
 		
+		String data = Variables.CLIENT_ROOM_DATA;
+		data += "|" + roomName + "|" + roomLimit;
+		send(data);
 	}
 }

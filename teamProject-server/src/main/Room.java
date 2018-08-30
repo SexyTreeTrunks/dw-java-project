@@ -11,10 +11,13 @@ public class Room {
 	ArrayList<String> persons;
 	
 	public Room() {
-		
+		roomName = "";
+		persons = new ArrayList<>();
 	}
+	
 
 	public Room(String roomName, int personLimit, String userName, int cRoomNumber) {
+		persons = new ArrayList<>();
 		this.roomName = roomName;
 		this.personCurrent = 1;
 		this.roomNumber = cRoomNumber + 1;

@@ -28,6 +28,7 @@ public class HomePanel extends JPanel {
 	public HomePanel(Main mainFrame) {
 		main = mainFrame;
 		var = main.getVar();
+		roomList = new ArrayList<>();
 		lastPage = "1";
 		setPreferredSize(Variables.CHAT_PANEL_SIZE);
 		setLayout(new BorderLayout(0, 0));
@@ -115,7 +116,9 @@ public class HomePanel extends JPanel {
 	}
 
 	public void addRoom(String[] dataArr) {
-		roomList.add(getRoomByData(dataArr[1].split("_")));
+		Room room = getRoomByData(dataArr[1].split("_"));
+		roomList.add(room);
+		homeRoomListPanel.addRoom(room);
 	}
 
 	public void removeRoom(String[] dataArr) {
@@ -140,22 +143,24 @@ public class HomePanel extends JPanel {
 			if (room.roomName.equals(roomName) && room.roomNumber == roomNumber) {
 				iter.remove();
 				
-				
 				break;
 			}
 		}
 	}
 
 	public void addRoomList(String[] dataArr) {
-		for (int i = 1; i < dataArr.length; i++)
-			roomList.add(getRoomByData(dataArr[i].split("_")));
+		for (int i = 1; i < dataArr.length; i++) {
+			Room room = getRoomByData(dataArr[i].split("_"));
+			roomList.add(room);
+			homeRoomListPanel.addRoom(room);
+		}
 	}
 
 	public Room getRoomByData(String[] roomData) {
 		int roomNumber = Integer.parseInt(roomData[0]);
 		String roomName = roomData[1];
-		int personCurrent = Integer.parseInt(roomData[2]);
-		int personLimit = Integer.parseInt(roomData[3]);
+		int personCurrent = Integer.parseInt(roomData[2].trim());
+		int personLimit = Integer.parseInt(roomData[3].trim());
 		ArrayList<String> persons = new ArrayList<>();
 		String[] personList = roomData[4].split("-");
 		for (int i = 1; i < personList.length; i++)
@@ -163,5 +168,8 @@ public class HomePanel extends JPanel {
 
 		return new Room(roomNumber, roomName, personCurrent, personLimit, persons);
 	}
-
-}
+	
+	public ArrayList<Room> getrRoomList(){
+		return homeRoomListPanel.getRoomList();
+	}
+}	

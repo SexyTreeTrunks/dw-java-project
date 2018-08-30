@@ -42,13 +42,11 @@ public class SidePanel extends JPanel {
 	private ClientVO vo;
 	public String roomName;
 	public int roomLimit;
-	public boolean roomCreate;
 
 	public SidePanel(Main mainFrame) {
 		main = mainFrame;
 		var = main.getVar();
 		vo = var.getVO();
-		roomCreate = false;
 
 		setBorder(BorderFactory.createLineBorder(Color.black));
 		setBackground(Color.WHITE);
@@ -118,19 +116,13 @@ public class SidePanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				CreateRoomDialog dialog = new CreateRoomDialog(vo.getUserName());
 				dialog.setVisible(true);
-				createRoom();
 			}
 		});
 	}
 	public void createRoom() {
-		if(roomCreate) {
 			main.createRoom(roomName, roomLimit);
 			roomName = "";
 			roomLimit = -1;
-			roomCreate = false;
-		}
-		else
-			return ;
 	}
 	
 
@@ -287,7 +279,7 @@ public class SidePanel extends JPanel {
 				if (textRoomName.getText().length() == 0 || textLimit.getText().length() == 0) {
 					JOptionPane.showMessageDialog(this, "빈칸이 있습니다.", "확인", JOptionPane.ERROR_MESSAGE);
 				}
-
+				
 				else {
 					JOptionPane.showMessageDialog(this, "정상적으로 생성되었습니다.", "확인", JOptionPane.INFORMATION_MESSAGE);
 					roomName = textRoomName.getText();
@@ -295,14 +287,13 @@ public class SidePanel extends JPanel {
 					if(roomLimit == 0)
 						roomLimit = 999;
 					
-					roomCreate = true;
 					this.dispose();
+					createRoom();
 				}
 			}
 
 			else if (btn.equals(cancelBtn))
 				this.dispose();
 		}
-
 	}
 }
