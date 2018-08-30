@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
@@ -60,14 +61,24 @@ public class ChatPanel extends JPanel {
 		add(chatInfoPanel, BorderLayout.NORTH);
 		chatInfoPanel.setLayout(new BoxLayout(chatInfoPanel, BoxLayout.X_AXIS));
 
-		JLabel lblLeave = new JLabel();
-		lblLeave.setIcon(new ImageIcon("img/leave_room.png"));
-		lblLeave.setBorder(new EmptyBorder(10, 15, 10, 15));
-		chatInfoPanel.add(lblLeave);
-		lblLeave.addMouseListener(new MouseAdapter() {
+		JLabel lblClose = new JLabel();
+		lblClose.setIcon(new ImageIcon("img/close_room.png"));
+		lblClose.setBorder(new EmptyBorder(10, 15, 10, 15));
+		chatInfoPanel.add(lblClose);
+		lblClose.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				main.setMainCard("Home");
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 		});
 
@@ -111,6 +122,18 @@ public class ChatPanel extends JPanel {
 		lblSend.setPreferredSize(new Dimension(100, 100));
 		lblSend.setIcon(new ImageIcon("img/chat_send.png"));
 		lblSend.setBorder(new EmptyBorder(0, 25, 0, 0));
+		lblSend.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+
+		});
 		chatSendPanel.add(lblSend, BorderLayout.EAST);
 
 		textAreaChatSend.addKeyListener(new KeyAdapter() {

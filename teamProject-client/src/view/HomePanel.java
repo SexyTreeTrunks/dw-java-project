@@ -19,11 +19,12 @@ public class HomePanel extends JPanel {
 	private Variables var;
 	private String lastPage;
 	private JPanel homeCenterPanel;
-	private HomeRoomListPanel homeRoomListPanel;
+	public HomeRoomListPanel homeRoomListPanel;
 	private HomeNoRoomPanel homeNoRoomPanel;
 	private CardLayout homeCards;
 	private String homeCardName;
 	private ArrayList<Room> roomList;
+	
 
 	public HomePanel(Main mainFrame) {
 		main = mainFrame;
@@ -116,27 +117,13 @@ public class HomePanel extends JPanel {
 	}
 
 	public void addRoom(String[] dataArr) {
-		Room room = getRoomByData(dataArr[1].split("_"));
-		roomList.add(room);
-		homeRoomListPanel.addRoom(room);
+		addRoomToList(getRoomByData(dataArr[1].split(":")));
+		setHomeCard();
 	}
-
+	
 	public void removeRoom(String[] dataArr) {
-		Room newRoom = getRoomByData(dataArr[1].split("_"));
-		Iterator<Room> iter = roomList.iterator();
-		while (iter.hasNext()) {
-			Room room = iter.next();
-			if (room.roomNumber == newRoom.roomNumber) {
-				room = newRoom;
-				
-				break;
-			}
-		}
-	}
-
-	public void updateRoom(String[] dataArr) {
-		int roomNumber = Integer.parseInt(dataArr[1].split("_")[0]);
-		String roomName = dataArr[1].split("_")[1];
+		int roomNumber = Integer.parseInt(dataArr[1].split(":")[0]);
+		String roomName = dataArr[1].split(":")[1];
 		Iterator<Room> iter = roomList.iterator();
 		while (iter.hasNext()) {
 			Room room = iter.next();
@@ -148,12 +135,29 @@ public class HomePanel extends JPanel {
 		}
 	}
 
-	public void addRoomList(String[] dataArr) {
-		for (int i = 1; i < dataArr.length; i++) {
-			Room room = getRoomByData(dataArr[i].split("_"));
-			roomList.add(room);
-			homeRoomListPanel.addRoom(room);
+	public void updateRoom(String[] dataArr) {
+		Room newRoom = getRoomByData(dataArr[1].split(":"));
+		Iterator<Room> iter = roomList.iterator();
+		while (iter.hasNext()) {
+			Room room = iter.next();
+			if (room.roomNumber == newRoom.roomNumber) {
+				room = newRoom;
+				
+				break;
+			}
 		}
+	}
+
+	public void addRoomList(String[] dataArr) {
+		for (int i = 1; i < dataArr.length; i++)
+			addRoomToList(getRoomByData(dataArr[i].split(":")));
+		
+		setHomeCard();
+	}
+	
+	public void addRoomToList(Room room) {
+		roomList.add(room);
+		homeRoomListPanel.addRoom(room);
 	}
 
 	public Room getRoomByData(String[] roomData) {
@@ -169,7 +173,7 @@ public class HomePanel extends JPanel {
 		return new Room(roomNumber, roomName, personCurrent, personLimit, persons);
 	}
 	
-	public ArrayList<Room> getrRoomList(){
+	public ArrayList<Room> getRoomList(){
 		return homeRoomListPanel.getRoomList();
 	}
 }	

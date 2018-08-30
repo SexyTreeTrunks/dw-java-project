@@ -13,6 +13,7 @@ public class Variables {
 	
 	public static String CLIENT_USER_DATA = "001";
 	public static String CLIENT_USER_LIST = "002";
+	public static String CLIENT_ROOM_REQUEST = "010";
 	public static String CLIENT_ROOM_DATA = "011";
 	public static String CLIENT_ROOM_LIST = "012";
 	public static String CLIENT_ROOM_ENTER = "013";
@@ -22,6 +23,7 @@ public class Variables {
 	public static String CLIENT_ROOM_UPDATE = "017";
 	public static String CLIENT_TEXT_SEND = "100";
 	public static String CLIENT_ROOM_SEND = "200";
+	
 	
 	public static Dimension SIDE_PANEL_SIZE = new Dimension(200, 600);
 	public static Dimension MAIN_PANEL_SIZE = new Dimension(760, 600);

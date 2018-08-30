@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -88,10 +89,7 @@ public class SidePanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					String roomName = list.getSelectedValue();
-					var.getVO().setconnectRoom(roomName);
-					main.addChatPanel(roomName);
-					main.setMainCard("Chat_" + roomName);
+					main.openChat(list.getSelectedValue());
 					list.clearSelection();
 				}
 			}
@@ -110,6 +108,7 @@ public class SidePanel extends JPanel {
 		btnCreateRoom.setBackground(Color.WHITE);
 		panel_3.add(btnCreateRoom, BorderLayout.NORTH);
 		btnCreateRoom.setFont(var.getFont(18));
+		btnCreateRoom.setBorder(BorderFactory.createMatteBorder(2, 1, 1, 1, Color.BLACK));
 		btnCreateRoom.addActionListener(new ActionListener() {
 
 			@Override
@@ -118,13 +117,26 @@ public class SidePanel extends JPanel {
 				dialog.setVisible(true);
 			}
 		});
+
+		btnCreateRoom.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+
+		});
 	}
+
 	public void createRoom() {
-			main.createRoom(roomName, roomLimit);
-			roomName = "";
-			roomLimit = -1;
+		main.createRoom(roomName, roomLimit);
+		roomName = "";
+		roomLimit = -1;
 	}
-	
 
 	private ListCellRenderer<? super String> getRenderer() {
 		return new DefaultListCellRenderer() {
@@ -184,7 +196,7 @@ public class SidePanel extends JPanel {
 		public CreateRoomDialog(String userName) {
 			setBackground(Color.WHITE);
 			setTitle("채팅방 만들기");
-			setBounds(100, 100, 368, 175);
+			setBounds(100, 100, 368, 190);
 			getContentPane().setLayout(new BorderLayout());
 			contentPanel.setBackground(Color.WHITE);
 			contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -197,6 +209,7 @@ public class SidePanel extends JPanel {
 				panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 				{
 					JLabel lblRoomName = new JLabel("채팅방 이름");
+					lblRoomName.setFont(var.getFont(14));
 					lblRoomName.setBackground(Color.WHITE);
 					lblRoomName.setBorder(new EmptyBorder(20, 0, 0, 0));
 					panel.add(lblRoomName);
@@ -222,6 +235,7 @@ public class SidePanel extends JPanel {
 				panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 				{
 					JLabel lblLimit = new JLabel("방 최대 인원");
+					lblLimit.setFont(var.getFont(14));
 					lblLimit.setBackground(Color.WHITE);
 					lblLimit.setBorder(new EmptyBorder(20, 30, 0, 30));
 					panel.add(lblLimit);
@@ -231,7 +245,7 @@ public class SidePanel extends JPanel {
 					panel.add(textLimit);
 					textLimit.setColumns(4);
 					textLimit.addKeyListener(new KeyAdapter() {
-						
+
 						@Override
 						public void keyTyped(KeyEvent e) {
 							char c = e.getKeyChar();
@@ -240,11 +254,24 @@ public class SidePanel extends JPanel {
 								e.consume();
 								return;
 							}
-							
-							if (!textLimit.getText().equals("") && Integer.parseInt(textLimit.getText()) > 100)
-								textLimit.setText("99");
-							
+
 							super.keyTyped(e);
+						}
+						@Override
+						public void keyReleased(KeyEvent e) {
+							// TODO Auto-generated method stub
+							super.keyReleased(e);
+							
+
+							if (!textLimit.getText().equals("") && Integer.parseInt(textLimit.getText()) > 1000) {
+								textLimit.setText("999");
+								e.consume();
+								return;
+							} else if (!textLimit.getText().equals("") && Integer.parseInt(textLimit.getText()) < 1) {
+								textLimit.setText("1");
+								e.consume();
+								return;
+							}
 						}
 					});
 				}
@@ -274,21 +301,31 @@ public class SidePanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JButton btn = (JButton) e.getSource();
-
+			boolean isExist = false;
 			if (btn.equals(okBtn)) {
-				if (textRoomName.getText().length() == 0 || textLimit.getText().length() == 0) {
-					JOptionPane.showMessageDialog(this, "빈칸이 있습니다.", "확인", JOptionPane.ERROR_MESSAGE);
+				roomName = textRoomName.getText();
+				roomLimit = Integer.parseInt(textLimit.getText());
+
+				for (Room room : main.homePanel.getRoomList()) {
+					if (room.roomName.equals(roomName)) {
+						JOptionPane.showMessageDialog(this, "이미 동일한 방 이름이 있습니다.", "실패", JOptionPane.ERROR_MESSAGE);
+						isExist = true;
+						break;
+					}
 				}
-				
-				else {
-					JOptionPane.showMessageDialog(this, "정상적으로 생성되었습니다.", "확인", JOptionPane.INFORMATION_MESSAGE);
-					roomName = textRoomName.getText();
-					roomLimit = Integer.parseInt(textLimit.getText());
-					if(roomLimit == 0)
-						roomLimit = 999;
-					
-					this.dispose();
-					createRoom();
+				if (!isExist) {
+					if (roomName.length() == 0 || roomLimit == 0) {
+						JOptionPane.showMessageDialog(this, "빈칸이 있습니다.", "확인", JOptionPane.ERROR_MESSAGE);
+					}
+
+					else {
+						JOptionPane.showMessageDialog(this, "정상적으로 생성되었습니다.", "확인", JOptionPane.INFORMATION_MESSAGE);
+						if (roomLimit == 0)
+							roomLimit = 999;
+
+						this.dispose();
+						createRoom();
+					}
 				}
 			}
 

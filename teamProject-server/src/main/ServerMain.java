@@ -17,6 +17,7 @@ public class ServerMain {
 
 	public static String CLIENT_USER_DATA = "001";
 	public static String CLIENT_USER_LIST = "002";
+	public static String CLIENT_ROOM_REQUEST = "010";
 	public static String CLIENT_ROOM_DATA = "011";
 	public static String CLIENT_ROOM_LIST = "012";
 	public static String CLIENT_ROOM_ENTER = "013";
@@ -135,6 +136,8 @@ public class ServerMain {
 							else if (data.startsWith(CLIENT_USER_DATA))
 								clientListAdd(data);
 
+							else if (data.startsWith(CLIENT_ROOM_REQUEST))
+								roomListRefresh();
 							// Room Add
 							else if (data.startsWith(CLIENT_ROOM_DATA))
 								roomListAdd(data);
@@ -205,15 +208,17 @@ public class ServerMain {
 						realData += "|" + dataArr[i];
 				else
 					realData += "|" + dataArr[3];
-				String message = dataArr[0] + "|" + sender + realData;
-
 				// 1:1 chat
-				if (!receiver.startsWith("Room_"))
-					clientSend(message, receiver);
-
+				if (!receiver.startsWith("Room_")) {
+					String message = "|" + sender + realData;
+					clientSend(CLIENT_TEXT_SEND + message, receiver);
+				}
 				// 1:n chat
 				else
-					roomSend(message, Integer.parseInt(receiver.replaceAll("Room_", "")));
+				{
+					String message = "|" + receiver.replaceAll("Room_", "")  +"|" + sender + realData;
+					roomSend(CLIENT_ROOM_SEND + message, receiver.replaceAll("Room_", ""));
+				}
 			}
 		}
 
@@ -232,6 +237,7 @@ public class ServerMain {
 
 			// Client List Refresh
 			clientListRefresh();
+
 		}
 
 		void clientListRefresh() {
@@ -241,6 +247,7 @@ public class ServerMain {
 
 			for (Client client : connections)
 				client.send(data);
+
 		}
 
 		void roomListAdd(String data) {
@@ -262,12 +269,14 @@ public class ServerMain {
 		}
 
 		void roomListRefresh() {
-			String data = CLIENT_ROOM_LIST;
+			String data = "";
 			if (roomList.size() == 0)
 				return;
 			// roomNumber_roomName_roomCurrent_roomLimit_roomPersonList
 			for (Room room : roomList)
-				data += getRoomData(data, room);
+				data = getRoomData(data, room);
+
+			data = CLIENT_ROOM_LIST + data;
 
 			send(data);
 		}
@@ -282,9 +291,11 @@ public class ServerMain {
 				for (Room room : roomList) {
 
 					// Room Change
-					if (room.roomName.equals(roomName) && room.roomNumber == roomNumber) {
+					if (room.roomName.equals(roomName) && room.roomNumber == roomNumber
+							&& !room.persons.contains(userName)) {
 						room.enter(userName);
 						roomChange(CLIENT_ROOM_UPDATE, room);
+						break;
 					}
 				}
 			}
@@ -313,6 +324,7 @@ public class ServerMain {
 						else
 							roomChange(CLIENT_ROOM_UPDATE, room);
 
+						break;
 					}
 				}
 			}
@@ -323,62 +335,42 @@ public class ServerMain {
 		}
 
 		String getRoomData(String data, Room room) {
-			data += "|" + room.roomNumber + "" + room.roomName + "" + Integer.toString(room.personCurrent) + ""
-					+ Integer.toString(room.personLimit) + "";
+			data += "|" + room.roomNumber + ":" + room.roomName + ":" + Integer.toString(room.personCurrent) + ":"
+					+ Integer.toString(room.personLimit) + ":";
 			for (String userName : room.persons)
-				data += "" + userName;
+				data += "-" + userName;
 
 			return data;
 		}
 
-		Room getRoomByNumber(int roomNumber) {
+		Room getRoomByNumber(String roomName) {
 			for (Room room : roomList)
-				if (room.roomNumber == roomNumber)
+				if (room.roomName.equals(roomName))
 					return room;
 
 			return null;
 		}
 
-		void roomSend(String message, int roomNumber) {
-			clientSend(message, getRoomByNumber(roomNumber).persons);
+		void roomSend(String message, String roomName) {
+			clientSend(message, getRoomByNumber(roomName).persons);
 		}
 
 		// Client All Send
 		void clientSend(String data) {
-			Runnable runnable = new Runnable() {
 
-				@Override
-				public void run() {
-					try {
-						
-						for (Client client : connections)
-							client.send(data);
-					} catch (Exception e) {
-						try {
-							e.printStackTrace();
-							System.out.println("Client Not Connected" + sc.getRemoteAddress() + " : "
-									+ Thread.currentThread().getName());
+			for (Client client : connections)
+				client.send(data);
 
-							connections.remove(Client.this);
-							sc.close();
-							clientListRefresh();
-
-						} catch (Exception e2) {
-						}
-					}
-				}
-			};
-
-			exeService.submit(runnable);
 		}
 
 		// Client Room Send
 		void clientSend(String data, ArrayList<String> persons) {
-			for (Client client : connections)
-				if (persons.contains(client.userName)) {
+			for (Client client : connections) {
+				if (client.userName.equals(this.userName))
+					continue;
+				else if (persons.contains(client.userName))
 					client.send(data);
-					break;
-				}
+			}
 
 		}
 

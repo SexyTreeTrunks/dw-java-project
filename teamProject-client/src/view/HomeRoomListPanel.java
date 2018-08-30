@@ -2,9 +2,12 @@ package view;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -14,13 +17,15 @@ import javax.swing.border.EmptyBorder;
 
 import com.mysql.fabric.xmlrpc.base.Array;
 
+import jaco.mp3.a.C;
+
 public class HomeRoomListPanel extends JPanel {
 
 	private Main main;
 	private Variables var;
 	private ArrayList<String> roomListOne;
 	private ArrayList<Room> roomList;
-	private ArrayList<HomeRoomPanel> roomPanelList;
+	public ArrayList<HomeRoomPanel> roomPanelList;
 
 	private JPanel homeRoomLeftPanel, homeRoomRightPanel;
 
@@ -28,7 +33,6 @@ public class HomeRoomListPanel extends JPanel {
 
 	public HomeRoomListPanel() {
 		roomList = new ArrayList<>();
-
 		init();
 	}
 
@@ -47,6 +51,8 @@ public class HomeRoomListPanel extends JPanel {
 	}
 
 	private void init() {
+		roomListOne = new ArrayList<>();
+
 		setBackground(Color.WHITE);
 		setLayout(new CardLayout(0, 0));
 		setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.black));
@@ -80,7 +86,7 @@ public class HomeRoomListPanel extends JPanel {
 		if (roomSequence < 5)
 			homeRoomLeftPanel.add(panel);
 		else
-			homeRoomLeftPanel.add(panel);
+			homeRoomRightPanel.add(panel);
 
 		roomPanelList.add(panel);
 
@@ -88,31 +94,48 @@ public class HomeRoomListPanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					String roomName = panel.room.roomName;
-					if (!roomName.equals("")) {
-						var.getVO().setconnectRoom(roomName);
-						main.setMainCard("Chat_" + roomName);
-					}
+					if(panel.room.roomNumber == 0)
+						main.openChat(panel.room.roomName);
+					
+					else 
+						main.openChat(panel.room);
+					
+					panel.setBackground(Color.white);
+					panel.roomChatCount = 0;
+					panel.lblChatCount.setText("");
+					panel.lblChatCount.setVisible(false);
 				}
 			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				if (!panel.lblRoom.getText().equals(""))
+					setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+
 		});
 	}
 
 	public int addRoom(Room room) {
-		if (!roomList.contains(room)) {
-			roomList.add(room);
-			setRoomPanel(room);
-			return 1;
-		}
+		for (Room r : roomList)
+			if (r.roomName.equals(room.roomName))
+				return 0;
 
-		else
-			return 0;
+		roomList.add(room);
+		setRoomPanel(room);
+		return 1;
 	}
 
 	public void addRoom(String roomName) {
-		if (!roomListOne.contains(roomName))
+		if (!roomListOne.contains(roomName)) {
 			roomListOne.add(roomName);
-
+			setRoomPanel(roomName);
+		}
 	}
 
 	public void removeRoom(String roomName) {
@@ -128,7 +151,6 @@ public class HomeRoomListPanel extends JPanel {
 				iterRoom.remove();
 				break;
 			}
-
 		}
 
 		while (iterPanel.hasNext()) {
@@ -153,6 +175,17 @@ public class HomeRoomListPanel extends JPanel {
 			if (panel.room.roomName.equals("")) {
 				panel.room = room;
 				panel.lblRoom.setText(panel.room.roomName);
+				break;
+			}
+		}
+	}
+	
+	public void setRoomPanel(String roomName) {
+		for (HomeRoomPanel panel : roomPanelList) {
+			if (panel.room.roomName.equals("")) {
+				panel.room = new Room(roomName);
+				panel.lblRoom.setText(panel.room.roomName);
+				break;
 			}
 		}
 	}
