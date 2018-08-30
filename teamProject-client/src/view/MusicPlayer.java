@@ -130,6 +130,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		music_delete_btn.addActionListener(this);
 		music_plus_btn.addActionListener(this);
 		
+		
 	}
 	
 	
@@ -170,7 +171,19 @@ public class MusicPlayer extends JPanel implements ActionListener {
 					mp3.getPlayList().remove(selected);
 					playList.removeElementAt(selected);
 					
-					playing = false;
+					deleteAfterStart = true;
+					
+					try {
+						mp3.play();
+						
+						playing = true;
+						
+						pauseImg();
+					} catch (ArrayIndexOutOfBoundsException e) {
+						
+					} catch (Exception e) {
+						
+					}
 					
 				} catch (ArrayIndexOutOfBoundsException e) {
 					// TODO: handle exception
@@ -179,8 +192,8 @@ public class MusicPlayer extends JPanel implements ActionListener {
 				}
 				
 			} else if (list.getSelectedIndex() == -1) {
-				start_btn.setIcon(new ImageIcon("img\\play.png"));
 				mp3.stop();
+				stopImg();
 				playList.removeAllElements();
 				mp3.removeAll();
 				playing = false;
@@ -196,18 +209,31 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	public void PlayMp3PlayerListener() {
 		if (playList.getSize() > 0) {
 			if (playing == false) {
-				start_btn.setIcon(new ImageIcon("img\\pause.png"));
 				mp3.play();
+				pauseImg();
 				playing = true;
 			} else if (playing == true) {
-				start_btn.setIcon(new ImageIcon("img\\play.png"));
 				mp3.pause();
+				pauseImg();
 				playing = false;
 			}
 			
-
 		} else if (playList.getSize() < 0) {
 			
+		}
+	}
+	
+	public void stopImg() {
+		if(mp3.isStopped() == true) {
+			start_btn.setIcon(new ImageIcon("img\\play.png"));
+		}
+	}
+	
+	public void pauseImg() {
+		if(mp3.isPaused() == true) {
+			start_btn.setIcon(new ImageIcon("img\\play.png"));
+		}else if(mp3.isPaused() == false || mp3.isStopped() == false) {
+			start_btn.setIcon(new ImageIcon("img\\pause.png"));
 		}
 	}
 
@@ -221,9 +247,9 @@ public class MusicPlayer extends JPanel implements ActionListener {
 
 		// 멈춤 버튼
 		if (e.getSource() == stop_btn) {
-			start_btn.setIcon(new ImageIcon("img\\play.png"));
 			playing = false;
 			mp3.stop();
+			stopImg();
 		}
 
 		// 재생 목록 추가
