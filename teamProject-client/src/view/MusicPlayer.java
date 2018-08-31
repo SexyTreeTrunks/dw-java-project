@@ -36,13 +36,13 @@ import sun.java2d.pipe.ValidatePipe;
 
 public class MusicPlayer extends JPanel implements ActionListener {
 	
-	// ��ư
+	// 占쏙옙튼
 	public JButton start_btn, stop_btn, music_plus_btn, music_delete_btn;
 
-	// �г�
+	// 占싻놂옙
 	public JPanel panel, panel_1, panel_2;
 
-	// ��� ��� (���� Ŭ���� ���)
+	// 占쏙옙占� 占쏙옙占� (占쏙옙占쏙옙 클占쏙옙占쏙옙 占쏙옙占�)
 	public JList list;
 	public DefaultListModel playList = new DefaultListModel();
 	public DefaultListModel absolutePath = new DefaultListModel();
@@ -52,13 +52,13 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	// mp3 api
 	public MP3Player mp3 = new MP3Player();
 
-	// ���� Ž����
+	// 占쏙옙占쏙옙 탐占쏙옙占쏙옙
 	public JFileChooser fileChooser = new JFileChooser();
-	public FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("mp3파일", "mp3");
+	public FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("mp3�뙆�씪", "mp3");
 
-	// ������ (Ŭ���� ����)
+	// 占쏙옙占쏙옙占쏙옙 (클占쏙옙占쏙옙 占쏙옙占쏙옙)
 
-	// ��� �� �Ͻ�����
+	// 占쏙옙占� 占쏙옙 占싹쏙옙占쏙옙占쏙옙
 	public boolean paused;
 	public boolean playing = false;
 	public boolean stoped;
@@ -116,7 +116,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		listHeaderPanel.setBackground(Color.white);
 		lblNewLabel.setForeground(new Color(0, 0, 0));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("HY헤드라인M", Font.BOLD, 22));
+		lblNewLabel.setFont(new Font("HY�뿤�뱶�씪�씤M", Font.BOLD, 22));
 		scrollPane.setColumnHeaderView(listHeaderPanel);
 		scrollPane.setBackground(Color.white);
 
@@ -124,7 +124,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		list.setBackground(Color.WHITE);
 		scrollPane.setViewportView(list);
 
-		// ��ư �̺�Ʈ (�׼� ������)
+		// 占쏙옙튼 占싱븝옙트 (占쌓쇽옙 占쏙옙占쏙옙占쏙옙)
 		start_btn.addActionListener(this);
 		stop_btn.addActionListener(this);
 		music_delete_btn.addActionListener(this);
@@ -135,7 +135,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	
 	
 	
-	// 재생목록 추가 메서드
+	// �옱�깮紐⑸줉 異붽� 硫붿꽌�뱶
 	public void addMp3PlayerListener() {
 		fileChooser.setDialogTitle("Open Audio File");
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "//" + "Desktop"));
@@ -157,7 +157,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 
 	}
 
-	// 재생목록 선택 및 전체 삭제
+	// �옱�깮紐⑸줉 �꽑�깮 諛� �쟾泥� �궘�젣
 	public void removeMp3PlayerListener() {
 		if (playList.getSize() > 0) {
 			if (list.getSelectedIndex() >= 0) {
@@ -174,11 +174,12 @@ public class MusicPlayer extends JPanel implements ActionListener {
 					deleteAfterStart = true;
 					
 					try {
-						mp3.play();
+						SkipForword();
 						
 						playing = true;
 						
 						pauseImg();
+						
 					} catch (ArrayIndexOutOfBoundsException e) {
 						
 					} catch (Exception e) {
@@ -205,7 +206,7 @@ public class MusicPlayer extends JPanel implements ActionListener {
 
 	}
 
-	// 재생 메서드
+	// �옱�깮 硫붿꽌�뱶
 	public void PlayMp3PlayerListener() {
 		if (playList.getSize() > 0) {
 			if (playing == false) {
@@ -236,28 +237,32 @@ public class MusicPlayer extends JPanel implements ActionListener {
 			start_btn.setIcon(new ImageIcon("img\\pause.png"));
 		}
 	}
+	
+	public void SkipForword() {
+		mp3.skipForward();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		// 재생 버튼
+		// �옱�깮 踰꾪듉
 		if (e.getSource() == start_btn) {
 			PlayMp3PlayerListener();
 		}
 
-		// 멈춤 버튼
+		// 硫덉땄 踰꾪듉
 		if (e.getSource() == stop_btn) {
 			playing = false;
 			mp3.stop();
 			stopImg();
 		}
 
-		// 재생 목록 추가
+		// �옱�깮 紐⑸줉 異붽�
 		if (e.getSource() == music_plus_btn) {
 			addMp3PlayerListener();
 		}
 
-		// 재생 목록 삭제
+		// �옱�깮 紐⑸줉 �궘�젣
 		if (e.getSource() == music_delete_btn) {
 			removeMp3PlayerListener();
 		}
