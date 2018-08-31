@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.ImageIcon;
@@ -18,14 +19,17 @@ public class HomePanel extends JPanel {
 	private Variables var;
 	private String lastPage;
 	private JPanel homeCenterPanel;
-	private HomeRoomPanel homeRoomPanel;
+	public HomeRoomListPanel homeRoomListPanel;
 	private HomeNoRoomPanel homeNoRoomPanel;
 	private CardLayout homeCards;
 	private String homeCardName;
+	private ArrayList<Room> roomList;
+	
 
 	public HomePanel(Main mainFrame) {
 		main = mainFrame;
 		var = main.getVar();
+		roomList = new ArrayList<>();
 		lastPage = "1";
 		setPreferredSize(Variables.CHAT_PANEL_SIZE);
 		setLayout(new BorderLayout(0, 0));
@@ -80,11 +84,11 @@ public class HomePanel extends JPanel {
 		lblCurPage.setText("1");
 
 		homeNoRoomPanel = new HomeNoRoomPanel();
-		homeRoomPanel = new HomeRoomPanel(main);
+		homeRoomListPanel = new HomeRoomListPanel(main);
 
 		homeCenterPanel = new JPanel();
 		homeCenterPanel.setLayout(homeCards);
-		homeCenterPanel.add("Exist", homeRoomPanel);
+		homeCenterPanel.add("Exist", homeRoomListPanel);
 		homeCenterPanel.add("No", homeNoRoomPanel);
 
 		homePanel.add(homeCenterPanel, BorderLayout.CENTER);
@@ -93,7 +97,7 @@ public class HomePanel extends JPanel {
 
 	public void setHomeCard() {
 		String panel = "No";
-		if (homeRoomPanel.roomCount != 0)
+		if (homeRoomListPanel.getRoomList().size() != 0)
 			panel = "Exist";
 		homeCards.show(homeCenterPanel, panel);
 		homeCardName = panel;
@@ -104,19 +108,72 @@ public class HomePanel extends JPanel {
 	}
 
 	public void addRoom(String roomName) {
-		if (!homeRoomPanel.getRoomList().contains(roomName)) {
-			homeRoomPanel.addRoom(roomName);
-			setHomeCard();
-		}
+		homeRoomListPanel.addRoom(roomName);
+		setHomeCard();
+	}
+
+	public void removeRoom(String roomName) {
+		homeRoomListPanel.removeRoom(roomName);
+	}
+
+	public void addRoom(String[] dataArr) {
+		addRoomToList(getRoomByData(dataArr[1].split(":")));
+		setHomeCard();
 	}
 	
-	public void removeRoom(String roomName) {
-		for(String room : homeRoomPanel.getRoomList()){
-			String[] roo = room.split("_");
-			if(roo[0].equals(roomName)) {
-				homeRoomPanel.removeRoom(roomName, Integer.parseInt(roo[1]));
-				setHomeCard();
+	public void removeRoom(String[] dataArr) {
+		int roomNumber = Integer.parseInt(dataArr[1].split(":")[0]);
+		String roomName = dataArr[1].split(":")[1];
+		Iterator<Room> iter = roomList.iterator();
+		while (iter.hasNext()) {
+			Room room = iter.next();
+			if (room.roomName.equals(roomName) && room.roomNumber == roomNumber) {
+				iter.remove();
+				
+				break;
 			}
 		}
 	}
-}
+
+	public void updateRoom(String[] dataArr) {
+		Room newRoom = getRoomByData(dataArr[1].split(":"));
+		Iterator<Room> iter = roomList.iterator();
+		while (iter.hasNext()) {
+			Room room = iter.next();
+			if (room.roomNumber == newRoom.roomNumber) {
+				room = newRoom;
+				
+				break;
+			}
+		}
+	}
+
+	public void addRoomList(String[] dataArr) {
+		for (int i = 1; i < dataArr.length; i++)
+			addRoomToList(getRoomByData(dataArr[i].split(":")));
+		
+		setHomeCard();
+	}
+	
+	public void addRoomToList(Room room) {
+		roomList.add(room);
+		homeRoomListPanel.addRoom(room);
+	}
+
+	public Room getRoomByData(String[] roomData) {
+		int roomNumber = Integer.parseInt(roomData[0]);
+		String roomName = roomData[1];
+		int personCurrent = Integer.parseInt(roomData[2].trim());
+		int personLimit = Integer.parseInt(roomData[3].trim());
+		ArrayList<String> persons = new ArrayList<>();
+		String[] personList = roomData[4].split("-");
+		for (int i = 1; i < personList.length; i++)
+			persons.add(personList[i]);
+
+		return new Room(roomNumber, roomName, personCurrent, personLimit, persons);
+	}
+	
+	public ArrayList<Room> getRoomList(){
+		return homeRoomListPanel.getRoomList();
+	}
+}	

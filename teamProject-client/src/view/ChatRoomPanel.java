@@ -36,7 +36,7 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
-public class ChatPanel extends JPanel {
+public class ChatRoomPanel extends JPanel {
 
 	private Main main;
 	private Variables var;
@@ -47,11 +47,11 @@ public class ChatPanel extends JPanel {
 	private JTextArea textAreaChatSend;
 	private JLabel lblChatName;
 
-	public ChatPanel(Main mainFrame, String connectRoom) {
+	public ChatRoomPanel(Main mainFrame,Room room) {
 		main = mainFrame;
 		var = main.getVar();
-		var.getVO().setconnectRoom(connectRoom);
-		roomName = connectRoom;
+		roomName = room.roomName;
+		var.getVO().setconnectRoom("Room_" + roomName);
 		unreadChat = 0;
 		setLayout(new BorderLayout(0, 0));
 		setPreferredSize(Variables.CHAT_PANEL_SIZE);
@@ -59,12 +59,12 @@ public class ChatPanel extends JPanel {
 		JPanel chatInfoPanel = new JPanel();
 		chatInfoPanel.setBackground(Color.WHITE);
 		add(chatInfoPanel, BorderLayout.NORTH);
-		chatInfoPanel.setLayout(new BoxLayout(chatInfoPanel, BoxLayout.X_AXIS));
+		chatInfoPanel.setLayout(new BorderLayout(0, 0));
 
 		JLabel lblClose = new JLabel();
 		lblClose.setIcon(new ImageIcon("img/close_room.png"));
 		lblClose.setBorder(new EmptyBorder(10, 15, 10, 15));
-		chatInfoPanel.add(lblClose);
+		chatInfoPanel.add(lblClose, BorderLayout.WEST);
 		lblClose.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -82,10 +82,32 @@ public class ChatPanel extends JPanel {
 			}
 		});
 
-		lblChatName = new JLabel(connectRoom);
+		lblChatName = new JLabel(roomName);
 		lblChatName.setFont(var.getFont(14));
 		chatInfoPanel.add(lblChatName);
 		chatInfoPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.lightGray));
+		
+		JLabel lblLeave = new JLabel("");
+		lblLeave.setBackground(Color.WHITE);
+		lblLeave.setIcon(new ImageIcon("img/leave_room.png"));
+		lblLeave.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				main.leaveRoom(room);
+				main.setMainCard("Home");
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+		});
+		chatInfoPanel.add(lblLeave, BorderLayout.EAST);
 		JPanel chatViewPanel = new JPanel();
 		chatViewPanel.setBackground(Color.WHITE);
 		chatViewPanel.setLayout(new BorderLayout(0, 0));
@@ -159,10 +181,6 @@ public class ChatPanel extends JPanel {
 		});
 	}
 
-	public void connectRoom() {
-		lblChatName.setText(var.getVO().getconnectRoom());
-	}
-
 	private void chatViewAdd(String chat) {
 		StyledDocument document = (StyledDocument) chatViewTextPane.getDocument();
 		try {
@@ -193,16 +211,16 @@ public class ChatPanel extends JPanel {
 	public void chatReceive(String data) {
 
 		String[] message = data.split("\\|");
-		String sendUser = message[1];
+		String sendUser = message[2];
 
 		String realData = "";
-		if(message.length > 3) {
-			for(int i =2 ; i<message.length; i++)
+		if(message.length > 4) {
+			for(int i =3 ; i<message.length; i++)
 				realData += message[i] + "|";
 			realData = realData.substring(0, realData.length()-1);
 		}
 		else
-			realData += message[2];
+			realData += message[3];
 		
 		chatViewAdd(sendUser + " : " + realData);
 	}

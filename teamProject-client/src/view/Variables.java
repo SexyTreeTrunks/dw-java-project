@@ -7,13 +7,22 @@ import model.ClientVO;
 
 public class Variables {
 	// Server IP, Port
-	//public static final String SERVER_IP = "localhost";
+//	public static final String SERVER_IP = "localhost";
 	public static final String SERVER_IP = "35.190.228.94";
 	public static final int SERVER_PORT = 3000;
 	
 	public static String CLIENT_USER_DATA = "001";
 	public static String CLIENT_USER_LIST = "002";
+	public static String CLIENT_ROOM_REQUEST = "010";
+	public static String CLIENT_ROOM_DATA = "011";
+	public static String CLIENT_ROOM_LIST = "012";
+	public static String CLIENT_ROOM_ENTER = "013";
+	public static String CLIENT_ROOM_LEAVE = "014";
+	public static String CLIENT_ROOM_ADD = "015";
+	public static String CLIENT_ROOM_REMOVE = "016";
+	public static String CLIENT_ROOM_UPDATE = "017";
 	public static String CLIENT_TEXT_SEND = "100";
+	public static String CLIENT_ROOM_SEND = "200";
 	
 	
 	public static Dimension SIDE_PANEL_SIZE = new Dimension(200, 600);
