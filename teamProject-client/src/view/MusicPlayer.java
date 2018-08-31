@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -23,21 +31,23 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jaco.mp3.player.MP3Player;
-//import javafx.scene.media.Media;
-//import javafx.scene.media.MediaPlayer;
+import jaco.mp3.player.c;
+import sun.java2d.pipe.ValidatePipe;
 
 public class MusicPlayer extends JPanel implements ActionListener {
-
+	
 	// ��ư
-	public JButton start_btn, stop_btn, music_plus_btn, music_delete_btn, paused_btn;
+	public JButton start_btn, stop_btn, music_plus_btn, music_delete_btn;
 
 	// �г�
 	public JPanel panel, panel_1, panel_2;
 
 	// ��� ��� (���� Ŭ���� ���)
 	public JList list;
-	public DefaultListModel playlist = new DefaultListModel();
-	public DefaultListModel absolute_path = new DefaultListModel();
+	public DefaultListModel playList = new DefaultListModel();
+	public DefaultListModel absolutePath = new DefaultListModel();
+	// public Vector<String> playList = new Vector<>();
+	// public Vector<String> absolutePath = new Vector<>();
 
 	// mp3 api
 	public MP3Player mp3 = new MP3Player();
@@ -47,13 +57,15 @@ public class MusicPlayer extends JPanel implements ActionListener {
 	public FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("mp3파일", "mp3");
 
 	// ������ (Ŭ���� ����)
-	PlayerThread playerThread;
 
 	// ��� �� �Ͻ�����
-	public boolean paused = false;
+	public boolean paused;
 	public boolean playing = false;
-	public boolean stoped = false;
+	public boolean stoped;
+	public boolean add;
+	public boolean addPlayList;
 	public String current_song = "";
+	public boolean deleteAfterStart;
 
 	/**
 	 * Create the panel.
@@ -71,10 +83,6 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		start_btn = new JButton("");
 		start_btn.setIcon(new ImageIcon("img\\play.png"));
 		panel.add(start_btn);
-
-		paused_btn = new JButton("");
-		paused_btn.setIcon(new ImageIcon("img\\pause.png"));
-		panel.add(paused_btn);
 
 		stop_btn = new JButton("");
 		stop_btn.setIcon(new ImageIcon("img\\stop.png"));
@@ -112,123 +120,148 @@ public class MusicPlayer extends JPanel implements ActionListener {
 		scrollPane.setColumnHeaderView(listHeaderPanel);
 		scrollPane.setBackground(Color.white);
 
-		list = new JList(playlist);
+		list = new JList(playList);
 		list.setBackground(Color.WHITE);
 		scrollPane.setViewportView(list);
 
 		// ��ư �̺�Ʈ (�׼� ������)
 		start_btn.addActionListener(this);
 		stop_btn.addActionListener(this);
-		paused_btn.addActionListener(this);
 		music_delete_btn.addActionListener(this);
 		music_plus_btn.addActionListener(this);
-		list.addMouseListener(new MouseDoubleClick_List());
+		
+		
+	}
+	
+	
+	
+	// 재생목록 추가 메서드
+	public void addMp3PlayerListener() {
+		fileChooser.setDialogTitle("Open Audio File");
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "//" + "Desktop"));
+		fileChooser.setMultiSelectionEnabled(true);
+		int option = fileChooser.showOpenDialog(this);
+		if (option == fileChooser.APPROVE_OPTION) {
+			
+			File selectedFile[] = fileChooser.getSelectedFiles();
 
+			for (int x = 0; x < selectedFile.length; x++) {
+				File file = selectedFile[x];
+				mp3.addToPlayList(file);
+				playList.addElement(file.getName());
+
+			}
+		} else {
+
+		}
+
+	}
+
+	// 재생목록 선택 및 전체 삭제
+	public void removeMp3PlayerListener() {
+		if (playList.getSize() > 0) {
+			if (list.getSelectedIndex() >= 0) {
+				try {
+					mp3.stop();
+					
+					start_btn.setIcon(new ImageIcon("img\\play.png"));
+					
+					int selected = list.getLeadSelectionIndex();
+					
+					mp3.getPlayList().remove(selected);
+					playList.removeElementAt(selected);
+					
+					deleteAfterStart = true;
+					
+					try {
+						mp3.play();
+						
+						playing = true;
+						
+						pauseImg();
+					} catch (ArrayIndexOutOfBoundsException e) {
+						
+					} catch (Exception e) {
+						
+					}
+					
+				} catch (ArrayIndexOutOfBoundsException e) {
+					// TODO: handle exception
+				} catch (Exception e) {
+					
+				}
+				
+			} else if (list.getSelectedIndex() == -1) {
+				mp3.stop();
+				stopImg();
+				playList.removeAllElements();
+				mp3.removeAll();
+				playing = false;
+				mp3 = new MP3Player();
+			}
+		} else if (playList.getSize() < 0) {
+			
+		}
+
+	}
+
+	// 재생 메서드
+	public void PlayMp3PlayerListener() {
+		if (playList.getSize() > 0) {
+			if (playing == false) {
+				mp3.play();
+				pauseImg();
+				playing = true;
+			} else if (playing == true) {
+				mp3.pause();
+				pauseImg();
+				playing = false;
+			}
+			
+		} else if (playList.getSize() < 0) {
+			
+		}
+	}
+	
+	public void stopImg() {
+		if(mp3.isStopped() == true) {
+			start_btn.setIcon(new ImageIcon("img\\play.png"));
+		}
+	}
+	
+	public void pauseImg() {
+		if(mp3.isPaused() == true) {
+			start_btn.setIcon(new ImageIcon("img\\play.png"));
+		}else if(mp3.isPaused() == false || mp3.isStopped() == false) {
+			start_btn.setIcon(new ImageIcon("img\\pause.png"));
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
+		// 재생 버튼
 		if (e.getSource() == start_btn) {
-			if(playing == false && paused == false) {
-				try {
-					playIt();
-				} catch (IndexOutOfBoundsException e2) {}
-			}else if(playing == false && paused == true) {
-				mp3.play();
-				playerThread = null;
-			}else if(playing == true && paused == false) {
-				stopIt();
-				playIt();
-			}
-		} else if (e.getSource() == stop_btn) {
-			stopIt();
-		} else if (e.getSource() == paused_btn) {
-			playing = false;
-			paused = true;
-			mp3.pause();
-		} else if (e.getSource() == music_plus_btn) {
-			fileChooser.setDialogTitle("Open Audio File");
-			fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "//" + "Desktop"));
-			fileChooser.setMultiSelectionEnabled(true);
-			int option = fileChooser.showOpenDialog(this);
-			if (option == fileChooser.APPROVE_OPTION) {
-				playlist.addElement(fileChooser.getSelectedFile().getName());
-				absolute_path.addElement(fileChooser.getSelectedFile().getAbsolutePath());
-
-			}
-		} else if (e.getSource() == music_delete_btn) {
-			if (list.getSelectedIndex() > 0) {
-				try {
-					stopIt();
-					playlist.remove(list.getSelectedIndex());
-					absolute_path.remove(list.getSelectedIndex());
-				} catch (Exception e2) {
-				}
-
-			} else {
-				stopIt();
-				playlist.clear();
-				absolute_path.clear();
-			}
-
+			PlayMp3PlayerListener();
 		}
 
-	}
-
-	// ���� �÷��� ���� ��
-	public void playIt() {
-		current_song = (String) absolute_path.getElementAt(list.getSelectedIndex());
-		playerThread = new PlayerThread();
-		playerThread.start();
-		playing = true;
-	}
-
-	// ���� ���� ���� ��
-	public void stopIt() {
-		if (playing == true || paused == true) {
+		// 멈춤 버튼
+		if (e.getSource() == stop_btn) {
+			playing = false;
 			mp3.stop();
-			playing = false;
-			paused = false;
-			playerThread = null;
+			stopImg();
 		}
-	}
 
-	// ������ (�÷��̽� ����� ������)
-	public class PlayerThread extends Thread {
-		public void run() {
-			try {
-				mp3 = new MP3Player(new File(current_song));
-				mp3.play();
-			} catch (Exception e) {
-				System.err.println(e);
-			}
+		// 재생 목록 추가
+		if (e.getSource() == music_plus_btn) {
+			addMp3PlayerListener();
 		}
-	}
 
-	// ���콺 ����Ŭ�� �̺�Ʈ
-	class MouseDoubleClick_List extends MouseAdapter {
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (e.getClickCount() == 2) {
-				stopIt();
-				playIt();
-			}
+		// 재생 목록 삭제
+		if (e.getSource() == music_delete_btn) {
+			removeMp3PlayerListener();
 		}
 
 	}
 
-	// ���� ���� ����
-	public class MP3FileFilter implements FileFilter {
-		public final String[] mp3_fileFormat = new String[] { "mp3" };
-
-		@Override
-		public boolean accept(File file) {
-			for (String fileFormat : mp3_fileFormat) {
-				if (file.getName().toLowerCase().endsWith(fileFormat)) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
 }
